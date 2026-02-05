@@ -8,8 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Register Services
 builder.Services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
+
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

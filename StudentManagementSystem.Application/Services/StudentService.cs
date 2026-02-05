@@ -1,5 +1,4 @@
-﻿using Microsoft.Identity.Client;
-using StudentManagementSystem.Application.DTOs.Student;
+﻿using StudentManagementSystem.Application.DTOs.Student;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
 using StudentManagementSystem.Domain.Entities;
@@ -60,22 +59,18 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<bool> UpdateStudentDetailsAsync(UpdateStudentDto dto)
         {
-            var existingStudent = await _studentRepository.GetStudentDetailsByStudentIdAsync(dto.Id);
-            if (existingStudent == null)
+            var student = await _studentRepository.GetStudentDetailsByStudentIdAsync(dto.Id);
+            if (student == null)
                 throw new Exception($"Student with Id {dto.Id} not foound ...");
 
-            var updatedStudent = new Student
-            {
-                Id = dto.Id,
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Address = dto.Address,
-                Email = dto.Email,
-                NIC = dto.NIC
-            };
+            student.FirstName = dto.FirstName ?? student.FirstName;
+            student.LastName = dto.LastName ?? student.LastName;
+            student.Address = dto.Address ?? student.Address;
+            student.Email = dto.Email ?? student.Email;
+            student.NIC = dto.NIC ?? student.NIC;
 
-            await _studentRepository.UpdateStudentDetailsAsync(updatedStudent);
-            return true;
+            var affectedRows = await _studentRepository.UpdateStudentDetailsAsync(student);
+            return affectedRows > 0;
         }
 
         public async Task<bool> IncativateStudentByStudentIdAsync(int stdId)

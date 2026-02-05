@@ -42,7 +42,7 @@ namespace StudentManagementSystem.Api.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UpdateStudentDetailsAsync(UpdateStudentDto dto) 
+        public async Task<ActionResult> UpdateStudentDetailsAsync(UpdateStudentDto dto)
         {
             var result = await _studentService.UpdateStudentDetailsAsync(dto);
             return Ok(result);

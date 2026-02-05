@@ -1,5 +1,4 @@
-﻿using StudentManagementSystem.Application.DTOs.Student;
-using StudentManagementSystem.Domain.Entities;
+﻿using StudentManagementSystem.Domain.Entities;
 
 namespace StudentManagementSystem.Application.Interfaces.IRepositories
 {
@@ -8,7 +7,7 @@ namespace StudentManagementSystem.Application.Interfaces.IRepositories
         Task<Student?> GetStudentDetailsByStudentIdAsync(int stdId);
         Task<IEnumerable<Student>> GetAllStudentsAsync();
         Task<int> CreateStudentAsync(Student newStudent);
-        Task UpdateStudentDetailsAsync(Student updatedStudent);
+        Task<int> UpdateStudentDetailsAsync(Student updatedStudent);
         Task<int> IncativateStudentByStudentIdAsync(int stdId);
     }
 }

@@ -70,7 +70,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             return await db.ExecuteScalarAsync<int>(sql, newStudent);
         }
 
-        public async Task UpdateStudentDetailsAsync(Student updatedStudent)
+        public async Task<int> UpdateStudentDetailsAsync(Student updatedStudent)
         {
             var sql = @"
                 UPDATE [dbo].[Student]
@@ -84,7 +84,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                 WHERE [Id] = @Id;
             ";
             using var db = _connectionFactory.CreateConnection();
-            await db.ExecuteAsync(sql, updatedStudent);
+            return await db.ExecuteAsync(sql, updatedStudent);
         }
 
         public async Task<int> IncativateStudentByStudentIdAsync(int stdId)
