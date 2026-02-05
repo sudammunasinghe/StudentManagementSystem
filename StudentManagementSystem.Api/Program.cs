@@ -1,6 +1,15 @@
+using StudentManagementSystem.Application.Interfaces.IRepositories;
+using StudentManagementSystem.Application.Interfaces.IServices;
+using StudentManagementSystem.Application.Services;
+using StudentManagementSystem.Domain.Persistence;
+using StudentManagementSystem.Infrastructure.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Register Services
+builder.Services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
