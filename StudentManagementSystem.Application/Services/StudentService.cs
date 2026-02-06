@@ -1,4 +1,5 @@
-﻿using StudentManagementSystem.Application.DTOs.Student;
+﻿using StudentManagementSystem.Application.DTOs.Course;
+using StudentManagementSystem.Application.DTOs.Student;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
 using StudentManagementSystem.Domain.Entities;
@@ -19,13 +20,21 @@ namespace StudentManagementSystem.Application.Services
             if (student == null)
                 throw new Exception($"Student with Id {stdId} not found ....");
 
+            var enrolledCourses = await _studentRepository.GetEnrolledCoursesByStudentIdAsync(stdId);
+
             var result = new StudentResponseDto
             {
                 StudentId = student.Id,
                 FullName = $"{student.FirstName} {student.LastName}",
                 Address = student.Address,
                 Email = student.Email,
-                NIC = student.NIC
+                NIC = student.NIC,
+                EnrolledCourses = enrolledCourses.Select(ec => new CourseDto
+                {
+                    CourseId = ec.Id,
+                    Title = ec.Title,
+                    Credits = ec.Credits
+                }).ToList()
             };
             return result;
         }

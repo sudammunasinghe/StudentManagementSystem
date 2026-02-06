@@ -99,5 +99,20 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             using var db = _connectionFactory.CreateConnection();
             return await db.ExecuteAsync(sql, new { stdId });
         }
+
+        public async Task<IEnumerable<Course>> GetEnrolledCoursesByStudentIdAsync(int studentId)
+        {
+            var sql = @"
+                SELECT
+                      CRS.[Id],
+                      CRS.[Title],
+                      CRS.[Credits]
+                FROM [dbo].[Enrollment] ENR
+                    INNER JOIN [dbo].[Course] CRS ON ENR.[CourseId] = CRS.[Id]
+                WHERE ENR.[StudentId] = @studentId AND ENR.[IsActive] = 1;
+            ";
+            using var db = _connectionFactory.CreateConnection();
+            return await db.QueryAsync<Course>(sql, new { studentId });
+        }
     }
 }
