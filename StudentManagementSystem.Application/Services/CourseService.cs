@@ -16,6 +16,8 @@ namespace StudentManagementSystem.Application.Services
         public async Task<CourseDto> GetCourseDetailsByCourseIdAsync(int courseId)
         {
             var course = await _courseRepository.GetCourseDetailsByCourseIdAsync(courseId);
+            var studentCount = await _courseRepository.GetEnrolledStudentCountForCourseByCourseIdAsync(courseId);
+
             if (course == null)
                 throw new Exception($"Course with Id {courseId} not found ...");
 
@@ -23,7 +25,8 @@ namespace StudentManagementSystem.Application.Services
             {
                 CourseId = course.Id,
                 Title = course.Title,
-                Credits = course.Credits
+                Credits = course.Credits,
+                NoOfEnrolledStudents = studentCount
             };
             return result;
 
@@ -31,14 +34,7 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<IEnumerable<CourseDto>> GetAllCoursesAsync()
         {
-            var courses = await _courseRepository.GetAllCoursesAsync();
-            var result = courses.Select(c => new CourseDto
-            {
-                CourseId = c.Id,
-                Title = c.Title,
-                Credits = c.Credits
-            }).ToList();
-            return result;
+            return await _courseRepository.GetAllCoursesAsync();
         }
 
         public async Task<int> CreateNewCourseAsync(CreateCourseDto dto)
