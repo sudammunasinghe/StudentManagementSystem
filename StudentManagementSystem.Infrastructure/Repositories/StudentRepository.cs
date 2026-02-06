@@ -106,9 +106,11 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                 SELECT
                       CRS.[Id],
                       CRS.[Title],
-                      CRS.[Credits]
+                      CRS.[Credits],
+                      EAS.[Description] [Status]
                 FROM [dbo].[Enrollment] ENR
                     INNER JOIN [dbo].[Course] CRS ON ENR.[CourseId] = CRS.[Id]
+                    INNER JOIN [dbo].[VW_EnrollmentApprovalStatus] EAS ON ENR.[Status] = EAS.[Id]
                 WHERE ENR.[StudentId] = @studentId AND ENR.[IsActive] = 1;
             ";
             using var db = _connectionFactory.CreateConnection();

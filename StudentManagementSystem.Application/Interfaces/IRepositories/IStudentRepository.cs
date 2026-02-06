@@ -1,5 +1,4 @@
 ﻿using StudentManagementSystem.Domain.Entities;
-using System.Collections;
 
 namespace StudentManagementSystem.Application.Interfaces.IRepositories
 {

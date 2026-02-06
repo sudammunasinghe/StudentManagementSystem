@@ -1,11 +1,6 @@
 ﻿using Dapper;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Domain.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentManagementSystem.Infrastructure.Repositories
 {
@@ -36,10 +31,14 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             var sql = @"
                 INSERT INTO [dbo].[Enrollment](
                     [StudentId],
-                    [CourseId]
+                    [CourseId],
+                    [Status],
+                    [RequestedAt]
                 ) VALUES (
                     @studentId,
-                    @courseId
+                    @courseId,
+                    1,
+                    GETDATE()
                 );
                 SELECT CAST(SCOPE_IDENTITY() AS INT);
             ";

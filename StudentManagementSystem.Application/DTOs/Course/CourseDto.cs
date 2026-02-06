@@ -5,6 +5,7 @@
         public int CourseId { get; set; }
         public string? Title { get; set; }
         public int? Credits { get; set; }
+        public string? EnrollmentStatus { get; set; }
         public int? NoOfEnrolledStudents { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace StudentManagementSystem.Api.Controllers
         public async Task<ActionResult> EnrollStudentAsync(EnrollStudentDto dto)
         {
             await _enrollService.EnrollStudentAsync(dto);
-            return Ok("Student Enrolled Successfully ...");
+            return Ok("Enrollment Approval Initiated ...");
         }
     }
 }

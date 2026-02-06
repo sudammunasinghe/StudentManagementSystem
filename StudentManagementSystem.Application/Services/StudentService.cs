@@ -33,7 +33,8 @@ namespace StudentManagementSystem.Application.Services
                 {
                     CourseId = ec.Id,
                     Title = ec.Title,
-                    Credits = ec.Credits
+                    Credits = ec.Credits,
+                    EnrollmentStatus = ec.Status
                 }).ToList()
             };
             return result;
