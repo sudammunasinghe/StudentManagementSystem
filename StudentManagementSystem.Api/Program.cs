@@ -18,6 +18,9 @@ builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IEnrollService, EnrollService>();
 builder.Services.AddScoped<IEnrollRepository, EnrollRepository>();
 
+builder.Services.AddScoped<IEnrollmentApprovalService, EnrollmentApprovalService>();
+builder.Services.AddScoped<IEnrollmentApprovalRepository, EnrollmentApprovalRepository>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
