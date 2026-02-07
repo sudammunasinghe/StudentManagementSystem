@@ -9,4 +9,13 @@
         Completed = 5,
         Expired = 6
     }
+
+    public enum ApprovalResult
+    {
+        Approved,
+        Rejected,
+        Cancelled,
+        NotFound,
+        InvalidTransition
+    }
 }

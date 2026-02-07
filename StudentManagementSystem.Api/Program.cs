@@ -12,11 +12,17 @@ builder.Services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
+builder.Services.AddScoped<IInstructorService, InstructorService>();
+builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 
 builder.Services.AddScoped<IEnrollService, EnrollService>();
 builder.Services.AddScoped<IEnrollRepository, EnrollRepository>();
+
+builder.Services.AddScoped<IEnrollmentApprovalService, EnrollmentApprovalService>();
+builder.Services.AddScoped<IEnrollmentApprovalRepository, EnrollmentApprovalRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
