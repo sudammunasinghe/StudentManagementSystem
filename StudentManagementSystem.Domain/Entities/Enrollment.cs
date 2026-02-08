@@ -10,7 +10,7 @@
         public string? RejectedReason { get; set; }
         public bool IsActive { get; set; }
         public DateTime LastModifiedDateTime { get; set; }
-        
+
         public void Approve()
         {
             if (Status != EnrollmentStatus.Pending)

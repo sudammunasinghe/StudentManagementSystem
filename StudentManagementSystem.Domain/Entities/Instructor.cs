@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StudentManagementSystem.Domain.Exceptions;
 
 namespace StudentManagementSystem.Domain.Entities
 {
@@ -17,24 +13,41 @@ namespace StudentManagementSystem.Domain.Entities
 
         private Instructor() { }
 
-        public static Instructor Create(
-            string firstName,
-            string lastName,
-            string email,
-            string nic,
-            string address)
+        public static void ValidateFirstName(string firstName)
         {
             if (string.IsNullOrWhiteSpace(firstName))
-                throw new Exception("First Name is required ...");
+                throw new DomainException("First Name is required ...");
+        }
 
+        public static void ValidateLastName(string lastName)
+        {
             if (string.IsNullOrWhiteSpace(lastName))
-                throw new Exception("Last Name is required ...");
+                throw new DomainException("Last Name is required ...");
+        }
 
+        public static void ValidateEmail(string email)
+        {
             if (!email.Contains("@gmail.com"))
-                throw new Exception("Invalid Email Format ...");
+                throw new DomainException("Invalid Email Format ...");
+        }
 
+        public static void ValidateNIC(string nic)
+        {
             if (string.IsNullOrWhiteSpace(nic) || nic.Length < 10)
-                throw new Exception("Invalid NIC ...");
+                throw new DomainException("Invalid NIC ...");
+        }
+
+        public static Instructor Create(
+            string? firstName,
+            string? lastName,
+            string? email,
+            string? nic,
+            string? address)
+        {
+            ValidateFirstName(firstName);
+            ValidateLastName(lastName);
+            ValidateEmail(email);
+            ValidateNIC(nic);
 
             return new Instructor
             {
@@ -44,6 +57,29 @@ namespace StudentManagementSystem.Domain.Entities
                 NIC = nic,
                 Address = address
             };
+        }
+
+        public void Update(
+            string? firstName,
+            string? lastName,
+            string? email,
+            string? nic,
+            string? address)
+        {
+            if (!string.IsNullOrWhiteSpace(firstName))
+                ValidateFirstName(firstName);
+            if (!string.IsNullOrWhiteSpace(lastName))
+                ValidateLastName(lastName);
+            if (!string.IsNullOrWhiteSpace(email))
+                ValidateEmail(email);
+            if (!string.IsNullOrWhiteSpace(nic))
+                ValidateNIC(nic);
+
+            FirstName = firstName ?? FirstName;
+            LastName = lastName ?? LastName;
+            Email = email ?? Email;
+            NIC = nic ?? NIC;
+            Address = address ?? Address;
         }
     }
 }

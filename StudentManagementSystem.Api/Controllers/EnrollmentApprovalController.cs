@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Mysqlx;
 using StudentManagementSystem.Application.DTOs.Approval;
 using StudentManagementSystem.Application.Interfaces.IServices;
 using StudentManagementSystem.Domain;

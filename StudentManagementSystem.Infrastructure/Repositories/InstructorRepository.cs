@@ -2,11 +2,6 @@
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Domain.Entities;
 using StudentManagementSystem.Domain.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentManagementSystem.Infrastructure.Repositories
 {
@@ -72,6 +67,36 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             ";
             using var db = _connectionFactory.CreateConnection();
             return await db.ExecuteScalarAsync<int>(sql, newInstructor);
+        }
+
+        public async Task<int> UpdateInstructorDetailsAsync(Instructor updatedInstructor)
+        {
+            var sql = @"
+                UPDATE [dbo].[Instructor]
+                    SET
+                        [FirstName] = @FirstName,
+                        [LastName] = @LastName,
+                        [Email] = @Email,
+                        [NIC] = @NIC,
+                        [Address] = @Address,
+                        [LastModifiedDateTime] = GETDATE()
+                WHERE [Id] = @Id;
+            ";
+            using var db = _connectionFactory.CreateConnection();
+            return await db.ExecuteAsync(sql, updatedInstructor);
+        }
+
+        public async Task<int> InactivateInstructorByInstructorIdAsync(int instructorId)
+        {
+            var sql = @"
+                UPDATE [dbo].[Instructor]
+                    SET
+                        [IsActive] = 0,
+                        [LastModifiedDateTime] = GETDATE()
+                WHERE [Id] = @InstructorId;
+            ";
+            using var db = _connectionFactory.CreateConnection();
+            return await db.ExecuteAsync(sql, new { InstructorId = instructorId });
         }
     }
 }
