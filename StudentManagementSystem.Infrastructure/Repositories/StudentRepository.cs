@@ -87,7 +87,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             return await db.ExecuteAsync(sql, updatedStudent);
         }
 
-        public async Task<int> IncativateStudentByStudentIdAsync(int stdId)
+        public async Task<int> InactivateStudentByStudentIdAsync(int stdId)
         {
             var sql = @"
                 UPDATE [dbo].[Student]

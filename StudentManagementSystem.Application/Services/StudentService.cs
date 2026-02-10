@@ -14,15 +14,15 @@ namespace StudentManagementSystem.Application.Services
             _studentRepository = studentRepository;
         }
 
-        public async Task<StudentResponseDto> GetStudentDetailsByStudentIdAsync(int stdId)
+        public async Task<StudentResponseDto?> GetStudentDetailsByStudentIdAsync(int stdId)
         {
             var student = await _studentRepository.GetStudentDetailsByStudentIdAsync(stdId);
             if (student == null)
-                throw new Exception($"Student with Id {stdId} not found ....");
+                return null;
 
             var enrolledCourses = await _studentRepository.GetEnrolledCoursesByStudentIdAsync(stdId);
 
-            var result = new StudentResponseDto
+            return new StudentResponseDto
             {
                 StudentId = student.Id,
                 FullName = $"{student.FirstName} {student.LastName}",
@@ -35,60 +35,59 @@ namespace StudentManagementSystem.Application.Services
                     Title = ec.Title,
                     Credits = ec.Credits,
                     EnrollmentStatus = ec.Status
-                }).ToList()
-            };
-            return result;
+                }).ToList() ?? new List<CourseDto>()
+            } ?? new StudentResponseDto();
         }
 
         public async Task<IEnumerable<StudentResponseDto>> GetAllStudentsAsync()
         {
             var students = await _studentRepository.GetAllStudentsAsync();
-            var result = students.Select(s => new StudentResponseDto
+            return students.Select(s => new StudentResponseDto
             {
                 StudentId = s.Id,
                 FullName = $"{s.FirstName} {s.LastName}",
                 Address = s.Address,
                 Email = s.Email,
                 NIC = s.NIC
-            }).ToList();
-            return result;
+            }).ToList() ?? new List<StudentResponseDto>();
         }
 
         public async Task<int> CreateStudentAsync(CreateStudentDto dto)
         {
-            var newStudent = new Student
-            {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Address = dto.Address,
-                Email = dto.Email,
-                NIC = dto.NIC
-            };
+            var newStudent = Student.Create(
+                dto.FirstName,
+                dto.LastName,
+                dto.Address,
+                dto.Email,
+                dto.NIC);
             return await _studentRepository.CreateStudentAsync(newStudent);
         }
 
         public async Task<bool> UpdateStudentDetailsAsync(UpdateStudentDto dto)
         {
-            var student = await _studentRepository.GetStudentDetailsByStudentIdAsync(dto.Id);
-            if (student == null)
-                throw new Exception($"Student with Id {dto.Id} not foound ...");
+            var existingStudent = await _studentRepository.GetStudentDetailsByStudentIdAsync(dto.Id);
+            if (existingStudent == null)
+                return false;
 
-            student.FirstName = dto.FirstName ?? student.FirstName;
-            student.LastName = dto.LastName ?? student.LastName;
-            student.Address = dto.Address ?? student.Address;
-            student.Email = dto.Email ?? student.Email;
-            student.NIC = dto.NIC ?? student.NIC;
+            existingStudent.Update(
+                dto.FirstName,
+                dto.LastName,
+                dto.Address,
+                dto.Email,
+                dto.NIC);
 
-            var affectedRows = await _studentRepository.UpdateStudentDetailsAsync(student);
+            var affectedRows = await _studentRepository.UpdateStudentDetailsAsync(existingStudent);
             return affectedRows > 0;
         }
 
-        public async Task<bool> IncativateStudentByStudentIdAsync(int stdId)
+        public async Task<bool> InactivateStudentByStudentIdAsync(int stdId)
         {
-            var affectedRows = await _studentRepository.IncativateStudentByStudentIdAsync(stdId);
-            if (affectedRows == 0)
-                throw new KeyNotFoundException("Student Id is not found ...");
-            return true;
+            var student = await _studentRepository.GetStudentDetailsByStudentIdAsync(stdId);
+            if (student == null)
+                return false;
+
+            var affectedRows = await _studentRepository.InactivateStudentByStudentIdAsync(stdId);
+            return affectedRows > 0;
         }
     }
 }
