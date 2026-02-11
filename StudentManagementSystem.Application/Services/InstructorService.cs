@@ -63,6 +63,7 @@ namespace StudentManagementSystem.Application.Services
         {
             var instructor = 
                 await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(dto.Id);
+
             if (instructor == null)
                 throw new NotFoundException("Instructor not found ...");
 

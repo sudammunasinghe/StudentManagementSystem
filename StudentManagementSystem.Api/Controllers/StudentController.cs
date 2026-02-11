@@ -23,32 +23,13 @@ namespace StudentManagementSystem.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ApiResponse<StudentResponseDto>>> GetStudentDetailsByStudentIdAsync(int stdId)
         {
-            try
+            var student = await _studentService.GetStudentDetailsByStudentIdAsync(stdId);
+            return Ok(new ApiResponse<StudentResponseDto>
             {
-                var student = await _studentService.GetStudentDetailsByStudentIdAsync(stdId);
-                if(student == null)
-                {
-                    return NotFound(new ApiResponse<StudentResponseDto>
-                    {
-                        Success = false,
-                        Message = "Student not found ..."
-                    });
-                }
-                return Ok(new ApiResponse<StudentResponseDto>
-                {
-                    Success = true,
-                    Data = student,
-                    Message = $"Student with Id {stdId} retrieved successfully ..."
-                });
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500, new ApiResponse<StudentResponseDto>
-                {
-                    Success = false,
-                    Message = $"Internal server error : {ex.Message}"
-                });
-            }
+                Success = true,
+                Data = student,
+                Message = $"Student by Id {stdId} retrieved successfully ..."
+            });
         }
 
         [HttpGet]
@@ -87,20 +68,13 @@ namespace StudentManagementSystem.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ApiResponse<StudentResponseDto>>> UpdateStudentDetailsAsync(UpdateStudentDto dto)
         {
-            var result = await _studentService.UpdateStudentDetailsAsync(dto);
-            var updatedStudent = await _studentService.GetStudentDetailsByStudentIdAsync(dto.Id);
-            if (!result)
-                return NotFound(new ApiResponse<StudentResponseDto>
-                {
-                    Success = false,
-                    Message = "Student not found ..."
-                });
+            var updatedStudent = await _studentService.UpdateStudentDetailsAsync(dto);
 
             return Ok(new ApiResponse<StudentResponseDto>
             {
                 Success = true,
                 Data = updatedStudent,
-                Message = $"Student updated successfully ..."
+                Message = "Student successfully updated ..."
             });
         }
 
@@ -109,13 +83,7 @@ namespace StudentManagementSystem.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ApiResponse<string>>> InactivateStudentByStudentIdAsync(int stdId)
         {
-            var result = await _studentService.InactivateStudentByStudentIdAsync(stdId);
-            if (!result)
-                return NotFound(new ApiResponse<string>
-                {
-                    Success = false,
-                    Message = "Student not found ..."
-                });
+            await _studentService.InactivateStudentByStudentIdAsync(stdId);
 
             return Ok(new ApiResponse<string>
             {

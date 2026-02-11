@@ -1,4 +1,5 @@
-﻿using StudentManagementSystem.Application.DTOs.Course;
+﻿using SendGrid.Helpers.Errors.Model;
+using StudentManagementSystem.Application.DTOs.Course;
 using StudentManagementSystem.Application.DTOs.Student;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
@@ -16,11 +17,14 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<StudentResponseDto?> GetStudentDetailsByStudentIdAsync(int stdId)
         {
-            var student = await _studentRepository.GetStudentDetailsByStudentIdAsync(stdId);
-            if (student == null)
-                return null;
+            var student = 
+                await _studentRepository.GetStudentDetailsByStudentIdAsync(stdId);
 
-            var enrolledCourses = await _studentRepository.GetEnrolledCoursesByStudentIdAsync(stdId);
+            if (student == null)
+                throw new NotFoundException("Student not found ...");
+
+            var enrolledCourses = 
+                await _studentRepository.GetEnrolledCoursesByStudentIdAsync(stdId);
 
             return new StudentResponseDto
             {
@@ -36,12 +40,14 @@ namespace StudentManagementSystem.Application.Services
                     Credits = ec.Credits,
                     EnrollmentStatus = ec.Status
                 }).ToList() ?? new List<CourseDto>()
-            } ?? new StudentResponseDto();
+            };
         }
 
         public async Task<IEnumerable<StudentResponseDto>> GetAllStudentsAsync()
         {
-            var students = await _studentRepository.GetAllStudentsAsync();
+            var students = 
+                await _studentRepository.GetAllStudentsAsync();
+
             return students.Select(s => new StudentResponseDto
             {
                 StudentId = s.Id,
@@ -49,7 +55,7 @@ namespace StudentManagementSystem.Application.Services
                 Address = s.Address,
                 Email = s.Email,
                 NIC = s.NIC
-            }).ToList() ?? new List<StudentResponseDto>();
+            }).ToList();
         }
 
         public async Task<int> CreateStudentAsync(CreateStudentDto dto)
@@ -63,31 +69,50 @@ namespace StudentManagementSystem.Application.Services
             return await _studentRepository.CreateStudentAsync(newStudent);
         }
 
-        public async Task<bool> UpdateStudentDetailsAsync(UpdateStudentDto dto)
+        public async Task<StudentResponseDto> UpdateStudentDetailsAsync(UpdateStudentDto dto)
         {
-            var existingStudent = await _studentRepository.GetStudentDetailsByStudentIdAsync(dto.Id);
-            if (existingStudent == null)
-                return false;
+            var student = 
+                await _studentRepository.GetStudentDetailsByStudentIdAsync(dto.Id);
 
-            existingStudent.Update(
+            if (student == null)
+                throw new NotFoundException("Student not found ...");
+
+            student.Update(
                 dto.FirstName,
                 dto.LastName,
                 dto.Address,
                 dto.Email,
                 dto.NIC);
 
-            var affectedRows = await _studentRepository.UpdateStudentDetailsAsync(existingStudent);
-            return affectedRows > 0;
+            var affectedRows = 
+                await _studentRepository.UpdateStudentDetailsAsync(student);
+
+            if (affectedRows == 0)
+                throw new Exception("Student update failed ...");
+
+            return new StudentResponseDto
+            {
+                StudentId = dto.Id,
+                FullName = $"{dto.FirstName} {dto.LastName}",
+                Address = dto.Address,
+                Email = dto.Email,
+                NIC = dto.NIC
+            };
         }
 
-        public async Task<bool> InactivateStudentByStudentIdAsync(int stdId)
+        public async Task InactivateStudentByStudentIdAsync(int stdId)
         {
-            var student = await _studentRepository.GetStudentDetailsByStudentIdAsync(stdId);
-            if (student == null)
-                return false;
+            var student = 
+                await _studentRepository.GetStudentDetailsByStudentIdAsync(stdId);
 
-            var affectedRows = await _studentRepository.InactivateStudentByStudentIdAsync(stdId);
-            return affectedRows > 0;
+            if (student == null)
+                throw new NotFoundException("Student not found ...");
+
+            var affectedRows = 
+                await _studentRepository.InactivateStudentByStudentIdAsync(stdId);
+
+            if (affectedRows == 0)
+                throw new Exception("Student inactivate failed ...");
         }
     }
 }
