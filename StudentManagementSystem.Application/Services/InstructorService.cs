@@ -1,4 +1,5 @@
-﻿using StudentManagementSystem.Application.DTOs.Instructor;
+﻿using SendGrid.Helpers.Errors.Model;
+using StudentManagementSystem.Application.DTOs.Instructor;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
 using StudentManagementSystem.Domain.Entities;
@@ -13,11 +14,11 @@ namespace StudentManagementSystem.Application.Services
             _instructorRepository = instructorRepository;
         }
 
-        public async Task<InstructorResponseDto?> GetInstructorDetailsByInstructorIdAsync(int instructorId)
+        public async Task<InstructorResponseDto> GetInstructorDetailsByInstructorIdAsync(int instructorId)
         {
             var instructor = await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(instructorId);
             if (instructor == null)
-                return null;
+                throw new NotFoundException("Instructor not found ...");
 
             return new InstructorResponseDto
             {
@@ -32,14 +33,14 @@ namespace StudentManagementSystem.Application.Services
         public async Task<IEnumerable<InstructorResponseDto>> GetAllInstructorsAsync()
         {
             var instructors = await _instructorRepository.GetAllInstructorsAsync();
-            return instructors?.Select(i => new InstructorResponseDto
+            return instructors.Select(i => new InstructorResponseDto
             {
                 InstructorId = i.Id,
                 FullName = $"{i.FirstName} {i.LastName}",
                 Email = i.Email,
                 Address = i.Address,
                 NIC = i.NIC
-            }).ToList() ?? new List<InstructorResponseDto>();
+            }).ToList();
         }
 
         public async Task<int> CreateInstructorAsync(CreateInstructorDto dto)
@@ -54,11 +55,11 @@ namespace StudentManagementSystem.Application.Services
             return await _instructorRepository.CreateInstructorAsync(newInstructor);
         }
 
-        public async Task<bool> UpdateInstructorDetailsAsync(UpdateInstructorDto dto)
+        public async Task<InstructorResponseDto> UpdateInstructorDetailsAsync(UpdateInstructorDto dto)
         {
             var existingInstructor = await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(dto.Id);
             if (existingInstructor == null)
-                return false;
+                throw new NotFoundException("Instructor not found ...");
 
             existingInstructor.Update(
                 dto.FirstName,
@@ -67,18 +68,26 @@ namespace StudentManagementSystem.Application.Services
                 dto.NIC,
                 dto.Address);
 
-            var affectedRows = await _instructorRepository.UpdateInstructorDetailsAsync(existingInstructor);
-            return affectedRows > 0;
+            await _instructorRepository.UpdateInstructorDetailsAsync(existingInstructor);
+            return new InstructorResponseDto
+            {
+                InstructorId = existingInstructor.Id,
+                FullName = $"{existingInstructor.FirstName} {existingInstructor.LastName}",
+                Email = existingInstructor.Email,
+                Address = existingInstructor.Address,
+                NIC = existingInstructor.NIC
+            };
         }
 
-        public async Task<bool> InactivateInstructorByInstructorIdAsync(int instructorId)
+        public async Task InactivateInstructorByInstructorIdAsync(int instructorId)
         {
             var instructor = await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(instructorId);
             if (instructor == null)
-                return false;
+                throw new NotFoundException("Instructor not found ...");
 
             var affectedRows = await _instructorRepository.InactivateInstructorByInstructorIdAsync(instructorId);
-            return affectedRows > 0;
+            if (affectedRows == 0)
+                throw new Exception("Failed to inactivate instructor ...");
         }
     }
 }

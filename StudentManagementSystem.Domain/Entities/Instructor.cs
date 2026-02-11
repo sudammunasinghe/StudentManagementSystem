@@ -5,33 +5,33 @@ namespace StudentManagementSystem.Domain.Entities
     public class Instructor : BaseEntity
     {
         public int Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public string NIC { get; set; }
-        public string Address { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? NIC { get; set; }
+        public string? Address { get; set; }
 
         private Instructor() { }
 
-        public static void ValidateFirstName(string firstName)
+        public static void ValidateFirstName(string? firstName)
         {
             if (string.IsNullOrWhiteSpace(firstName))
                 throw new DomainException("First Name is required ...");
         }
 
-        public static void ValidateLastName(string lastName)
+        public static void ValidateLastName(string? lastName)
         {
             if (string.IsNullOrWhiteSpace(lastName))
                 throw new DomainException("Last Name is required ...");
         }
 
-        public static void ValidateEmail(string email)
+        public static void ValidateEmail(string? email)
         {
             if (!email.Contains("@gmail.com"))
                 throw new DomainException("Invalid Email Format ...");
         }
 
-        public static void ValidateNIC(string nic)
+        public static void ValidateNIC(string? nic)
         {
             if (string.IsNullOrWhiteSpace(nic) || nic.Length < 10)
                 throw new DomainException("Invalid NIC ...");

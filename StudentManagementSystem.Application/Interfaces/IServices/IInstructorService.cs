@@ -7,7 +7,7 @@ namespace StudentManagementSystem.Application.Interfaces.IServices
         Task<InstructorResponseDto> GetInstructorDetailsByInstructorIdAsync(int instructorId);
         Task<IEnumerable<InstructorResponseDto>> GetAllInstructorsAsync();
         Task<int> CreateInstructorAsync(CreateInstructorDto dto);
-        Task<bool> UpdateInstructorDetailsAsync(UpdateInstructorDto dto);
-        Task<bool> InactivateInstructorByInstructorIdAsync(int instructorId);
+        Task<InstructorResponseDto> UpdateInstructorDetailsAsync(UpdateInstructorDto dto);
+        Task InactivateInstructorByInstructorIdAsync(int instructorId);
     }
 }
