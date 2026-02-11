@@ -67,19 +67,31 @@ namespace StudentManagementSystem.Domain.Entities
             string? address)
         {
             if (!string.IsNullOrWhiteSpace(firstName))
+            {
                 ValidateFirstName(firstName);
-            if (!string.IsNullOrWhiteSpace(lastName))
-                ValidateLastName(lastName);
-            if (!string.IsNullOrWhiteSpace(email))
-                ValidateEmail(email);
-            if (!string.IsNullOrWhiteSpace(nic))
-                ValidateNIC(nic);
+                FirstName = firstName.Trim();
+            }
 
-            FirstName = firstName ?? FirstName;
-            LastName = lastName ?? LastName;
-            Email = email ?? Email;
-            NIC = nic ?? NIC;
-            Address = address ?? Address;
+            if (!string.IsNullOrWhiteSpace(lastName))
+            {
+                ValidateLastName(lastName);
+                LastName = lastName.Trim();
+            }
+
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                ValidateEmail(email);
+                Email = email.Trim();
+            }
+
+            if (!string.IsNullOrWhiteSpace(nic))
+            {
+                ValidateNIC(nic);
+                NIC = nic.Trim();
+            }
+
+            if (address != null)
+                Address = address;
         }
     }
 }

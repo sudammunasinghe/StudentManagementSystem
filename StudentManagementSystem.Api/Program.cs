@@ -31,6 +31,9 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+//Register global exception
+app.UseMiddleware<StudentManagementSystem.Api.Middleware.GlobalExceptionMiddleware>();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -69,7 +69,7 @@ namespace StudentManagementSystem.Api.Controllers
             });
         }
 
-        [HttpPut("{instructorId}/Inactivate")]
+        [HttpPut("{instructorId}/inactivate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ApiResponse<string>>> InactivateInstructorByInstructorIdAsync(int instructorId)
