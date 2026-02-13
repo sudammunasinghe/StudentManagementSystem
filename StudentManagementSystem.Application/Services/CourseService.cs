@@ -1,4 +1,5 @@
-﻿using StudentManagementSystem.Application.DTOs.Course;
+﻿using SendGrid.Helpers.Errors.Model;
+using StudentManagementSystem.Application.DTOs.Course;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
 using StudentManagementSystem.Domain.Entities;
@@ -15,21 +16,22 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<CourseDto> GetCourseDetailsByCourseIdAsync(int courseId)
         {
-            var course = await _courseRepository.GetCourseDetailsByCourseIdAsync(courseId);
-            var studentCount = await _courseRepository.GetEnrolledStudentCountForCourseByCourseIdAsync(courseId);
+            var course = 
+                await _courseRepository.GetCourseDetailsByCourseIdAsync(courseId);
+
+            var studentCount = 
+                await _courseRepository.GetEnrolledStudentCountForCourseByCourseIdAsync(courseId);
 
             if (course == null)
-                throw new Exception($"Course with Id {courseId} not found ...");
+                throw new NotFoundException("Course not found ...");
 
-            var result = new CourseDto
+            return new CourseDto
             {
                 CourseId = course.Id,
                 Title = course.Title,
                 Credits = course.Credits,
                 NoOfEnrolledStudents = studentCount
             };
-            return result;
-
         }
 
         public async Task<IEnumerable<CourseDto>> GetAllCoursesAsync()
@@ -39,32 +41,54 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<int> CreateNewCourseAsync(CreateCourseDto dto)
         {
-            var newCourse = new Course
-            {
-                Title = dto.Title,
-                Credits = dto.Credits
-            };
+            var newCourse = Course.Create(
+                dto.Title, 
+                dto.Credits
+             );
             return await _courseRepository.CreateNewCourseAsync(newCourse);
         }
 
-        public async Task<bool> UpdateCourseDetailsAsync(UpdateCourseDto dto)
+        public async Task<CourseDto> UpdateCourseDetailsAsync(UpdateCourseDto dto)
         {
-            var course = await _courseRepository.GetCourseDetailsByCourseIdAsync(dto.Id);
-            if (course == null)
-                throw new Exception("Invalid course Id ...");
+            var course = 
+                await _courseRepository.GetCourseDetailsByCourseIdAsync(dto.Id);
 
-            course.Title = dto.Title ?? course.Title;
-            course.Credits = dto.Credits ?? course.Credits;
-            var affectedRows = await _courseRepository.UpdateCourseDetailsAsync(course);
-            return affectedRows > 0;
+            if (course == null)
+                throw new NotFoundException("Course not found ...");
+
+            course.Update(
+                dto.Title,
+                dto.Credits
+            );
+
+            var affectedRows = 
+                await _courseRepository.UpdateCourseDetailsAsync(course);
+
+            if (affectedRows == 0)
+                throw new Exception("Course update failed ...");
+
+            return new CourseDto
+            {
+                CourseId = course.Id,
+                Title = course.Title,
+                Credits = course.Credits
+            };
+            
         }
 
-        public async Task<bool> InactivateCourseByCourseIdAsync(int courseId)
+        public async Task InactivateCourseByCourseIdAsync(int courseId)
         {
-            var affectedRows = await _courseRepository.InactivateCourseByCourseIdAsync(courseId);
+            var course = 
+                await _courseRepository.GetCourseDetailsByCourseIdAsync(courseId);
+
+            if (course == null)
+                throw new NotFoundException("Course not found ...");
+
+            var affectedRows = 
+                await _courseRepository.InactivateCourseByCourseIdAsync(courseId);
+
             if (affectedRows == 0)
-                throw new KeyNotFoundException("Course Id not found ...");
-            return true;
+                throw new Exception("Course incativation failed ...");
         }
     }
 }
