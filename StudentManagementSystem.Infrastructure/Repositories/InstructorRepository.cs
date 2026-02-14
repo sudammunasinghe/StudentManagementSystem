@@ -13,7 +13,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<Instructor?> GetInstructorDetailsByInstructorIdAsync(int instructorId)
+        public async Task<Instructor?> GetInstructorDetailsByInstructorIdAsync(int? instructorId)
         {
             var sql = @"
                 SELECT

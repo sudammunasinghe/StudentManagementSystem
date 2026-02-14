@@ -51,11 +51,13 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                 INSERT INTO [dbo].[Course]
                 (
                     [Title],
-                    [Credits]
+                    [Credits],
+                    [InstructorId]
                 )
                 VALUES(
                     @Title,
-                    @Credits
+                    @Credits,
+                    @InstructorId
                 );
                 SELECT CAST(SCOPE_IDENTITY() AS INT);
             ";
@@ -70,6 +72,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                     SET
                         [Title] = @Title,
                         [Credits] = @Credits,
+                        [InstructorId] = @InstructorId,
                         [LastModifiedDateTime] = GETDATE()
                 WHERE [Id] = @Id;
             ";

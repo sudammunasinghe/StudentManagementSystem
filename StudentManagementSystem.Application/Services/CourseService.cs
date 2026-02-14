@@ -9,9 +9,11 @@ namespace StudentManagementSystem.Application.Services
     public class CourseService : ICourseService
     {
         private readonly ICourseRepository _courseRepository;
-        public CourseService(ICourseRepository courseRepository)
+        private readonly IInstructorRepository _instructorRepository;
+        public CourseService(ICourseRepository courseRepository, IInstructorRepository instructorRepository)
         {
             _courseRepository = courseRepository;
+            _instructorRepository = instructorRepository;
         }
 
         public async Task<CourseDto> GetCourseDetailsByCourseIdAsync(int courseId)
@@ -41,9 +43,16 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<int> CreateNewCourseAsync(CreateCourseDto dto)
         {
+            var instructor = 
+                await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(dto.InstructorId);
+
+            if (instructor == null)
+                throw new NotFoundException("Instructor not found ...");
+
             var newCourse = Course.Create(
                 dto.Title, 
-                dto.Credits
+                dto.Credits,
+                dto.InstructorId
              );
             return await _courseRepository.CreateNewCourseAsync(newCourse);
         }
@@ -56,9 +65,16 @@ namespace StudentManagementSystem.Application.Services
             if (course == null)
                 throw new NotFoundException("Course not found ...");
 
+            var instructor =
+                await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(dto.InstructorId);
+
+            if (instructor == null)
+                throw new NotFoundException("Instructor not found ...");
+
             course.Update(
                 dto.Title,
-                dto.Credits
+                dto.Credits,
+                dto.InstructorId
             );
 
             var affectedRows = 
