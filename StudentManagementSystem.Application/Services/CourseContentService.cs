@@ -58,5 +58,40 @@ namespace StudentManagementSystem.Application.Services
                 throw;
             }
         }
+
+        public async Task UpdateCourseMetaDataAsync(int contentId, UpdateCourseMetaDataDto dto)
+        {
+            var courseContent =
+                await _courseContentRepository.GetCourseContentByCourseContentIdAsync(contentId);
+
+            if (courseContent == null)
+                throw new NotFoundException("Course content not found ...");
+
+            courseContent.Update(
+                dto.Title,
+                dto.Description
+            );
+
+            var affectedRows =
+                await _courseContentRepository.UpdateCourseMetaDataAsync(courseContent);
+
+            if (affectedRows == 0)
+                throw new Exception("Course content update failed ...");
+        }
+
+        public async Task InactivateCourseContentByCourseContentIdAsync(int? contentId)
+        {
+            var courseContent =
+                await _courseContentRepository.GetCourseContentByCourseContentIdAsync(contentId);
+
+            if (courseContent == null)
+                throw new NotFoundException("Course content not found ...");
+
+            var affectedRows =
+                await _courseContentRepository.InactivateCourseContentByCourseContentIdAsync(contentId);
+
+            if (affectedRows == 0)
+                throw new Exception("Course content inactivation failed ...");
+        }
     }
 }

@@ -112,7 +112,7 @@ namespace StudentManagementSystem.Application.Services
                 await _studentRepository.InactivateStudentByStudentIdAsync(stdId);
 
             if (affectedRows == 0)
-                throw new Exception("Student inactivate failed ...");
+                throw new Exception("Student inactivation failed ...");
         }
     }
 }

@@ -16,6 +16,8 @@ namespace StudentManagementSystem.Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ApiResponse<string>>> UploadCourseContentAsync([FromForm] UploadCourseContentRequest request)
         {
             using var stream = request.File.OpenReadStream();
@@ -35,6 +37,32 @@ namespace StudentManagementSystem.Api.Controllers
             {
                 Success = true,
                 Message = "Content uplaoded successfully ..."
+            });
+        }
+
+        [HttpPut("{courseContentId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ApiResponse<string>>> UpdateCourseMetaDataAsync(int courseContentId, UpdateCourseMetaDataDto dto)
+        {
+            await _courseContentService.UpdateCourseMetaDataAsync(courseContentId, dto);
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Meta data updated successfully ..."
+            });
+        }
+
+        [HttpPut("{courseContentId}/inactivate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ApiResponse<string>>> InactivateCourseContentByCourseContentIdAsync(int? courseContentId)
+        {
+            await _courseContentService.InactivateCourseContentByCourseContentIdAsync(courseContentId);
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Course content successfully inactivated ..."
             });
         }
     }

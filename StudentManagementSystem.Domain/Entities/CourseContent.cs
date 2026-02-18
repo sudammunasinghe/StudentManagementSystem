@@ -57,5 +57,17 @@ namespace StudentManagementSystem.Domain.Entities
                 ContentType = contentType
             };
         }
+
+        public void Update(string? title, string? description)
+        {
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                ValidateTitle(title);
+                Title = title;
+            }
+
+            if (!string.IsNullOrWhiteSpace(description))
+                Description = description;
+        }
     }
 }
