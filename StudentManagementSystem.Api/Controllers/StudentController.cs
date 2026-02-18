@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using StudentManagementSystem.Application.DTOs.ApiResponse;
 using StudentManagementSystem.Application.DTOs.Student;
 using StudentManagementSystem.Application.Interfaces.IServices;
-using StudentManagementSystem.Domain.Exceptions;
-using System.Linq.Expressions;
 
 namespace StudentManagementSystem.Api.Controllers
 {

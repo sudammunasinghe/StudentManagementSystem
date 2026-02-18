@@ -1,10 +1,7 @@
-﻿using StudentManagementSystem.Application.Interfaces.IRepositories;
+﻿using Dapper;
+using StudentManagementSystem.Application.Interfaces.IRepositories;
+using StudentManagementSystem.Domain.Entities;
 using StudentManagementSystem.Domain.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentManagementSystem.Infrastructure.Repositories
 {
@@ -14,6 +11,33 @@ namespace StudentManagementSystem.Infrastructure.Repositories
         public CourseContentRepository(IDbConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
+        }
+
+        public async Task UploadCourseContentAsync(CourseContent newContent)
+        {
+            var sql = @"
+                INSERT INTO [dbo].[CourseContent]
+                (
+                	[CourseId],
+                	[InstructorId],
+                	[Title],
+                	[Description],
+                	[ContentType],
+                	[FileUrl],
+                	[FileSize]
+                )
+                VALUES(
+                    @CourseId,
+                    @InstructorId,
+                    @Title,
+                    @Description,
+                    @ContentType,
+                    @FileUrl,
+                    @FileSize
+                );
+            ";
+            using var db = _connectionFactory.CreateConnection();
+            await db.ExecuteScalarAsync(sql, newContent);
         }
     }
 }

@@ -18,8 +18,7 @@ namespace StudentManagementSystem.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse<string>>> UploadCourseContentAsync([FromForm] UploadCourseContentRequest request)
         {
-            using var ms = new MemoryStream();
-            await request.File.CopyToAsync(ms);
+            using var stream = request.File.OpenReadStream();
 
             var dto = new UploadCourseContentDto
             {
@@ -27,7 +26,7 @@ namespace StudentManagementSystem.Api.Controllers
                 InstructorId = request.InstructorId,
                 Title = request.Title,
                 Description = request.Description,
-                FileBytes = ms.ToArray(),
+                FileStream = stream,
                 FileName = request.File.FileName
             };
             await _courseContentService.UploadCourseContentAsync(dto);

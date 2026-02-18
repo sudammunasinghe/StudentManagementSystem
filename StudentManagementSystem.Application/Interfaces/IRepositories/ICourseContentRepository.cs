@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StudentManagementSystem.Domain.Entities;
 
 namespace StudentManagementSystem.Application.Interfaces.IRepositories
 {
     public interface ICourseContentRepository
     {
+        Task UploadCourseContentAsync(CourseContent newContent);
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Identity.Client;
-using SendGrid.Helpers.Errors.Model;
+﻿using SendGrid.Helpers.Errors.Model;
 using StudentManagementSystem.Application.DTOs.ApiResponse;
 using StudentManagementSystem.Domain.Exceptions;
 using System.Net;
@@ -21,7 +20,7 @@ namespace StudentManagementSystem.Api.Middleware
             {
                 await _next(context);// call next middleware
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await HandleExceptionAsync(context, ex);
             }

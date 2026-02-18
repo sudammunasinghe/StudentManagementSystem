@@ -16,7 +16,7 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<InstructorResponseDto> GetInstructorDetailsByInstructorIdAsync(int instructorId)
         {
-            var instructor = 
+            var instructor =
                 await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(instructorId);
 
             if (instructor == null)
@@ -34,7 +34,7 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<IEnumerable<InstructorResponseDto>> GetAllInstructorsAsync()
         {
-            var instructors = 
+            var instructors =
                 await _instructorRepository.GetAllInstructorsAsync();
 
             return instructors.Select(i => new InstructorResponseDto
@@ -61,7 +61,7 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<InstructorResponseDto> UpdateInstructorDetailsAsync(UpdateInstructorDto dto)
         {
-            var instructor = 
+            var instructor =
                 await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(dto.Id);
 
             if (instructor == null)
@@ -74,7 +74,7 @@ namespace StudentManagementSystem.Application.Services
                 dto.NIC,
                 dto.Address);
 
-            var affectedRows = 
+            var affectedRows =
                 await _instructorRepository.UpdateInstructorDetailsAsync(instructor);
 
             if (affectedRows == 0)
@@ -92,13 +92,13 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task InactivateInstructorByInstructorIdAsync(int instructorId)
         {
-            var instructor = 
+            var instructor =
                 await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(instructorId);
 
             if (instructor == null)
                 throw new NotFoundException("Instructor not found ...");
 
-            var affectedRows = 
+            var affectedRows =
                 await _instructorRepository.InactivateInstructorByInstructorIdAsync(instructorId);
 
             if (affectedRows == 0)

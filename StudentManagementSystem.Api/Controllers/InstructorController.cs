@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudentManagementSystem.Application.DTOs.ApiResponse;
 using StudentManagementSystem.Application.DTOs.Instructor;
-using StudentManagementSystem.Application.DTOs.Student;
 using StudentManagementSystem.Application.Interfaces.IServices;
-using StudentManagementSystem.Domain.Exceptions;
 
 namespace StudentManagementSystem.Api.Controllers
 {

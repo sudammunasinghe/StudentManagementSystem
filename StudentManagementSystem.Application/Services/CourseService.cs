@@ -18,10 +18,10 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<CourseDto> GetCourseDetailsByCourseIdAsync(int courseId)
         {
-            var course = 
+            var course =
                 await _courseRepository.GetCourseDetailsByCourseIdAsync(courseId);
 
-            var studentCount = 
+            var studentCount =
                 await _courseRepository.GetEnrolledStudentCountForCourseByCourseIdAsync(courseId);
 
             if (course == null)
@@ -43,14 +43,14 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<int> CreateNewCourseAsync(CreateCourseDto dto)
         {
-            var instructor = 
+            var instructor =
                 await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(dto.InstructorId);
 
             if (instructor == null)
                 throw new NotFoundException("Instructor not found ...");
 
             var newCourse = Course.Create(
-                dto.Title, 
+                dto.Title,
                 dto.Credits,
                 dto.InstructorId
              );
@@ -59,7 +59,7 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<CourseDto> UpdateCourseDetailsAsync(UpdateCourseDto dto)
         {
-            var course = 
+            var course =
                 await _courseRepository.GetCourseDetailsByCourseIdAsync(dto.Id);
 
             if (course == null)
@@ -77,7 +77,7 @@ namespace StudentManagementSystem.Application.Services
                 dto.InstructorId
             );
 
-            var affectedRows = 
+            var affectedRows =
                 await _courseRepository.UpdateCourseDetailsAsync(course);
 
             if (affectedRows == 0)
@@ -89,18 +89,18 @@ namespace StudentManagementSystem.Application.Services
                 Title = course.Title,
                 Credits = course.Credits
             };
-            
+
         }
 
         public async Task InactivateCourseByCourseIdAsync(int courseId)
         {
-            var course = 
+            var course =
                 await _courseRepository.GetCourseDetailsByCourseIdAsync(courseId);
 
             if (course == null)
                 throw new NotFoundException("Course not found ...");
 
-            var affectedRows = 
+            var affectedRows =
                 await _courseRepository.InactivateCourseByCourseIdAsync(courseId);
 
             if (affectedRows == 0)

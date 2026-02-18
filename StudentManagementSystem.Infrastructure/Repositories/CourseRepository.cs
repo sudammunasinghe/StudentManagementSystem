@@ -14,13 +14,14 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<Course?> GetCourseDetailsByCourseIdAsync(int courseId)
+        public async Task<Course?> GetCourseDetailsByCourseIdAsync(int? courseId)
         {
             var sql = @"
                 SELECT
                     [Id],
                     [Title],
-                    [Credits]
+                    [Credits],
+                    [InstructorId]
                 FROM [dbo].[Course]
                 WHERE [IsActive] = 1 AND [Id] = @courseId;
                     

@@ -17,13 +17,13 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<StudentResponseDto?> GetStudentDetailsByStudentIdAsync(int stdId)
         {
-            var student = 
+            var student =
                 await _studentRepository.GetStudentDetailsByStudentIdAsync(stdId);
 
             if (student == null)
                 throw new NotFoundException("Student not found ...");
 
-            var enrolledCourses = 
+            var enrolledCourses =
                 await _studentRepository.GetEnrolledCoursesByStudentIdAsync(stdId);
 
             return new StudentResponseDto
@@ -45,7 +45,7 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<IEnumerable<StudentResponseDto>> GetAllStudentsAsync()
         {
-            var students = 
+            var students =
                 await _studentRepository.GetAllStudentsAsync();
 
             return students.Select(s => new StudentResponseDto
@@ -71,7 +71,7 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<StudentResponseDto> UpdateStudentDetailsAsync(UpdateStudentDto dto)
         {
-            var student = 
+            var student =
                 await _studentRepository.GetStudentDetailsByStudentIdAsync(dto.Id);
 
             if (student == null)
@@ -84,7 +84,7 @@ namespace StudentManagementSystem.Application.Services
                 dto.Email,
                 dto.NIC);
 
-            var affectedRows = 
+            var affectedRows =
                 await _studentRepository.UpdateStudentDetailsAsync(student);
 
             if (affectedRows == 0)
@@ -102,13 +102,13 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task InactivateStudentByStudentIdAsync(int stdId)
         {
-            var student = 
+            var student =
                 await _studentRepository.GetStudentDetailsByStudentIdAsync(stdId);
 
             if (student == null)
                 throw new NotFoundException("Student not found ...");
 
-            var affectedRows = 
+            var affectedRows =
                 await _studentRepository.InactivateStudentByStudentIdAsync(stdId);
 
             if (affectedRows == 0)

@@ -1,5 +1,4 @@
 ﻿using StudentManagementSystem.Domain.Exceptions;
-using System.Data;
 
 namespace StudentManagementSystem.Domain.Entities
 {
@@ -67,6 +66,6 @@ namespace StudentManagementSystem.Domain.Entities
                 Credits = credits;
             }
         }
-        
+
     }
 }

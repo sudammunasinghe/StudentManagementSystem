@@ -65,7 +65,7 @@ namespace StudentManagementSystem.Domain.Entities
             string? lastName,
             string? address,
             string? email,
-            string ? nic)
+            string? nic)
         {
             if (!string.IsNullOrWhiteSpace(firstName))
                 ValidateFirstName(firstName);
