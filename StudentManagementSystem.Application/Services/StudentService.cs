@@ -1,9 +1,11 @@
 ﻿using SendGrid.Helpers.Errors.Model;
 using StudentManagementSystem.Application.DTOs.Course;
+using StudentManagementSystem.Application.DTOs.CourseContent;
 using StudentManagementSystem.Application.DTOs.Student;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
 using StudentManagementSystem.Domain.Entities;
+using System.Reflection;
 
 namespace StudentManagementSystem.Application.Services
 {
@@ -26,6 +28,9 @@ namespace StudentManagementSystem.Application.Services
             var enrolledCourses =
                 await _studentRepository.GetEnrolledCoursesByStudentIdAsync(stdId);
 
+            var enrolledCourseContents = 
+                await _studentRepository.GetCourseContentsByStudentIdAsync(stdId);
+
             return new StudentResponseDto
             {
                 StudentId = student.Id,
@@ -38,8 +43,18 @@ namespace StudentManagementSystem.Application.Services
                     CourseId = ec.Id,
                     Title = ec.Title,
                     Credits = ec.Credits,
-                    EnrollmentStatus = ec.Status
-                }).ToList() ?? new List<CourseDto>()
+                    EnrollmentStatus = ec.Status,
+                    CourseContents = enrolledCourseContents
+                        .Where(cc => cc.CourseId == ec.Id)
+                        .Select(cc => new CourseContentDto
+                        {
+                            ContentId = cc.Id,
+                            Title = cc.Title,
+                            Description = cc.Description,
+                            ContentType = cc.ContentType,
+                            FileSize = cc.FileSize
+                        }).ToList() ?? new List<CourseContentDto>()
+                }).ToList()
             };
         }
 

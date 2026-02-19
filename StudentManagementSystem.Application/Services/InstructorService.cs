@@ -1,4 +1,6 @@
 ﻿using SendGrid.Helpers.Errors.Model;
+using StudentManagementSystem.Application.DTOs.Course;
+using StudentManagementSystem.Application.DTOs.CourseContent;
 using StudentManagementSystem.Application.DTOs.Instructor;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
@@ -22,13 +24,36 @@ namespace StudentManagementSystem.Application.Services
             if (instructor == null)
                 throw new NotFoundException("Instructor not found ...");
 
+            var ownCourses = 
+                await _instructorRepository.GetOwnCoursesByInstructorIdAsync(instructorId);
+
+            var ownCourseContents = 
+                await _instructorRepository.GetCourseContentByInstructorIdAsync(instructorId);
+
             return new InstructorResponseDto
             {
                 InstructorId = instructor.Id,
                 FullName = $"{instructor.FirstName} {instructor.LastName}",
                 Email = instructor.Email,
                 Address = instructor.Address,
-                NIC = instructor.NIC
+                NIC = instructor.NIC,
+                OwnCourses = ownCourses.Select(oc => new CourseDto
+                {
+                    CourseId = oc.Id,
+                    Title = oc.Title,
+                    Credits = oc.Credits,
+                    CourseContents = ownCourseContents
+                        .Where(occ => occ.CourseId == oc.Id)
+                        .Select(occ => new CourseContentDto
+                        {
+                            ContentId = occ.Id,
+                            Title = occ.Title,
+                            Description = occ.Description,
+                            ContentType = occ.ContentType,
+                            FileSize = occ.FileSize
+                        }).ToList()
+
+                }).ToList()
             };
         }
 

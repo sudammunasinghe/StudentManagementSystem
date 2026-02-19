@@ -9,5 +9,7 @@ namespace StudentManagementSystem.Application.Interfaces.IRepositories
         Task<int> CreateInstructorAsync(Instructor newInstructor);
         Task<int> UpdateInstructorDetailsAsync(Instructor updatedInstructor);
         Task<int> InactivateInstructorByInstructorIdAsync(int instructorId);
+        Task<IEnumerable<Course>> GetOwnCoursesByInstructorIdAsync(int instructorId);
+        Task<IEnumerable<CourseContent>> GetCourseContentByInstructorIdAsync(int instructorId);
     }
 }
