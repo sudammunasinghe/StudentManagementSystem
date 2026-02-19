@@ -3,12 +3,6 @@ using StudentManagementSystem.Application.DTOs.Approval;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Domain.Entities;
 using StudentManagementSystem.Domain.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentManagementSystem.Infrastructure.Repositories
 {

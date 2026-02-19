@@ -8,7 +8,8 @@ namespace StudentManagementSystem.Application.Interfaces.IRepositories
         Task<IEnumerable<Student>> GetAllStudentsAsync();
         Task<int> CreateStudentAsync(Student newStudent);
         Task<int> UpdateStudentDetailsAsync(Student updatedStudent);
-        Task<int> IncativateStudentByStudentIdAsync(int stdId);
+        Task<int> InactivateStudentByStudentIdAsync(int stdId);
         Task<IEnumerable<Course>> GetEnrolledCoursesByStudentIdAsync(int studentId);
+        Task<IEnumerable<CourseContent>> GetCourseContentsByStudentIdAsync(int studentId);
     }
 }

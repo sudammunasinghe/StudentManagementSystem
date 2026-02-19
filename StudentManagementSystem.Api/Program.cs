@@ -24,12 +24,18 @@ builder.Services.AddScoped<IEnrollRepository, EnrollRepository>();
 builder.Services.AddScoped<IEnrollmentApprovalService, EnrollmentApprovalService>();
 builder.Services.AddScoped<IEnrollmentApprovalRepository, EnrollmentApprovalRepository>();
 
+builder.Services.AddScoped<ICourseContentService, CourseContentService>();
+builder.Services.AddScoped<ICourseContentRepository, CourseContentRepository>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+//Register global exception
+app.UseMiddleware<StudentManagementSystem.Api.Middleware.GlobalExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

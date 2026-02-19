@@ -5,7 +5,7 @@ namespace StudentManagementSystem.Application.Interfaces.IRepositories
 {
     public interface ICourseRepository
     {
-        Task<Course?> GetCourseDetailsByCourseIdAsync(int courseId);
+        Task<Course?> GetCourseDetailsByCourseIdAsync(int? courseId);
         Task<IEnumerable<CourseDto>> GetAllCoursesAsync();
         Task<int> CreateNewCourseAsync(Course newCourse);
         Task<int> UpdateCourseDetailsAsync(Course updatedCourse);

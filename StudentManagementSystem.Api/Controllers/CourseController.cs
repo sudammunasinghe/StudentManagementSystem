@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StudentManagementSystem.Application.DTOs.ApiResponse;
 using StudentManagementSystem.Application.DTOs.Course;
 using StudentManagementSystem.Application.Interfaces.IServices;
 
@@ -17,18 +18,29 @@ namespace StudentManagementSystem.Api.Controllers
         [HttpGet("{courseId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CourseDto>> GetCourseDetailsByCourseIdAsync(int courseId)
+        public async Task<ActionResult<ApiResponse<CourseDto>>> GetCourseDetailsByCourseIdAsync(int courseId)
         {
-            var response = await _courseService.GetCourseDetailsByCourseIdAsync(courseId);
-            return Ok(response);
+            var course = await _courseService.GetCourseDetailsByCourseIdAsync(courseId);
+
+            return Ok(new ApiResponse<CourseDto>
+            {
+                Success = true,
+                Data = course,
+                Message = $"Course by Id {courseId} retrieved successfully ..."
+            });
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCoursesAsync()
+        public async Task<ActionResult<ApiResponse<IEnumerable<CourseDto>>>> GetAllCoursesAsync()
         {
-            var response = await _courseService.GetAllCoursesAsync();
-            return Ok(response);
+            var allCourses = await _courseService.GetAllCoursesAsync();
+            return Ok(new ApiResponse<IEnumerable<CourseDto>>
+            {
+                Success = true,
+                Data = allCourses,
+                Message = "Courses retrieved successfully ..."
+            });
         }
 
         [HttpPost]
@@ -43,19 +55,28 @@ namespace StudentManagementSystem.Api.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UpdateCourseDetailsAsync(UpdateCourseDto dto)
+        public async Task<ActionResult<ApiResponse<CourseDto>>> UpdateCourseDetailsAsync(UpdateCourseDto dto)
         {
-            var result = await _courseService.UpdateCourseDetailsAsync(dto);
-            return Ok(result);
+            var updatedCourse = await _courseService.UpdateCourseDetailsAsync(dto);
+            return Ok(new ApiResponse<CourseDto>
+            {
+                Success = true,
+                Data = updatedCourse,
+                Message = "Course updated successfully ..."
+            });
         }
 
         [HttpPut("{courseId}/Inactivate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> InactivateCourseByCourseIdAsync(int courseId)
+        public async Task<ActionResult<ApiResponse<string>>> InactivateCourseByCourseIdAsync(int courseId)
         {
-            var result = await _courseService.InactivateCourseByCourseIdAsync(courseId);
-            return Ok(result);
+            await _courseService.InactivateCourseByCourseIdAsync(courseId);
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Course successfully inactivated ..."
+            });
         }
     }
 }

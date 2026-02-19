@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StudentManagementSystem.Application.DTOs.ApiResponse;
 using StudentManagementSystem.Application.DTOs.Student;
 using StudentManagementSystem.Application.Interfaces.IServices;
 
@@ -13,48 +14,79 @@ namespace StudentManagementSystem.Api.Controllers
         {
             _studentService = studentService;
         }
+
         [HttpGet("{stdId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<StudentResponseDto>> GetStudentDetailsByStudentIdAsync(int stdId)
+        public async Task<ActionResult<ApiResponse<StudentResponseDto>>> GetStudentDetailsByStudentIdAsync(int stdId)
         {
-            var response = await _studentService.GetStudentDetailsByStudentIdAsync(stdId);
-            return Ok(response);
+            var student = await _studentService.GetStudentDetailsByStudentIdAsync(stdId);
+            return Ok(new ApiResponse<StudentResponseDto>
+            {
+                Success = true,
+                Data = student,
+                Message = $"Student by Id {stdId} retrieved successfully ..."
+            });
         }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<StudentResponseDto>>> GetAllStudentsAsync()
+        public async Task<ActionResult<ApiResponse<IEnumerable<StudentResponseDto>>>> GetAllStudentsAsync()
         {
-            var response = await _studentService.GetAllStudentsAsync();
-            return Ok(response);
+            var students = await _studentService.GetAllStudentsAsync();
+            return Ok(new ApiResponse<IEnumerable<StudentResponseDto>>
+            {
+                Success = true,
+                Data = students,
+                Message = "Students retrieved successfully ..."
+            });
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> CreateStudentAsync(CreateStudentDto dto)
+        public async Task<ActionResult<ApiResponse<StudentResponseDto>>> CreateStudentAsync(CreateStudentDto dto)
         {
-            var result = await _studentService.CreateStudentAsync(dto);
-            return Ok(result);
+            var studentId = await _studentService.CreateStudentAsync(dto);
+            var newStudent = await _studentService.GetStudentDetailsByStudentIdAsync(studentId);
+            return CreatedAtAction(
+                nameof(GetStudentDetailsByStudentIdAsync),
+                new { stdId = studentId },
+                new ApiResponse<StudentResponseDto>
+                {
+                    Success = true,
+                    Data = newStudent,
+                    Message = "Student successfully created ..."
+                });
         }
 
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> UpdateStudentDetailsAsync(UpdateStudentDto dto)
+        public async Task<ActionResult<ApiResponse<StudentResponseDto>>> UpdateStudentDetailsAsync(UpdateStudentDto dto)
         {
-            var result = await _studentService.UpdateStudentDetailsAsync(dto);
-            return Ok(result);
+            var updatedStudent = await _studentService.UpdateStudentDetailsAsync(dto);
+
+            return Ok(new ApiResponse<StudentResponseDto>
+            {
+                Success = true,
+                Data = updatedStudent,
+                Message = "Student successfully updated ..."
+            });
         }
 
         [HttpPut("{stdId}/Incativate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult> IncativateStudentByStudentIdAsync(int stdId)
+        public async Task<ActionResult<ApiResponse<string>>> InactivateStudentByStudentIdAsync(int stdId)
         {
-            var result = await _studentService.IncativateStudentByStudentIdAsync(stdId);
-            return Ok(result);
+            await _studentService.InactivateStudentByStudentIdAsync(stdId);
+
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Student successfully inactivated ..."
+            });
         }
     }
 }

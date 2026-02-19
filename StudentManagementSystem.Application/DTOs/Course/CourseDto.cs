@@ -1,4 +1,6 @@
-﻿namespace StudentManagementSystem.Application.DTOs.Course
+﻿using StudentManagementSystem.Application.DTOs.CourseContent;
+
+namespace StudentManagementSystem.Application.DTOs.Course
 {
     public class CourseDto
     {
@@ -7,5 +9,6 @@
         public int? Credits { get; set; }
         public string? EnrollmentStatus { get; set; }
         public int? NoOfEnrolledStudents { get; set; }
+        public ICollection<CourseContentDto>? CourseContents { get; set; }
     }
 }
