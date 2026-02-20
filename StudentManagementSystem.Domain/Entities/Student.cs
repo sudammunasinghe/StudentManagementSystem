@@ -2,61 +2,44 @@
 
 namespace StudentManagementSystem.Domain.Entities
 {
-    public class Student : BaseEntity
+    public class Student : SystemUser
     {
-        public int Id { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public string? Address { get; set; }
-        public string? Email { get; set; }
-        public string? NIC { get; set; }
+        public double? GPA { get; set; }
 
         private Student() { }
 
-        public static void ValidateFirstName(string? firstName)
+        public static void ValidateGPA(double? gpa)
         {
-            if (string.IsNullOrWhiteSpace(firstName))
-                throw new DomainException("First Name is required ...");
-        }
-
-        public static void ValidateLastName(string? lastName)
-        {
-            if (string.IsNullOrWhiteSpace(lastName))
-                throw new DomainException("Last Name is required ...");
-        }
-
-        public static void ValidateEmail(string? email)
-        {
-            if (!email.Contains("@"))
-                throw new DomainException("Invlaid Email ...");
-        }
-
-        public static void ValidateNIC(string? nic)
-        {
-            if (string.IsNullOrWhiteSpace(nic) || nic.Length < 10)
-                throw new DomainException("Invlaid NIC ...");
+            if (gpa > 4.00 || gpa < 0.00)
+                throw new DomainException("Invalid GPA ...");
         }
 
         public static Student Create(
             string? firstName,
             string? lastName,
             string? address,
-            string? email,
-            string? nic
+            string? contactNumber,
+            string? nic,
+            double? gpa
             )
         {
             ValidateFirstName(firstName);
             ValidateLastName(lastName);
-            ValidateEmail(email);
-            ValidateNIC(nic);
+            ValidateContactNumber(contactNumber);
+            ValidateGPA(gpa);
+            var info = ExtractNicInformation(nic);
+
 
             return new Student
             {
                 FirstName = firstName,
                 LastName = lastName,
                 Address = address,
-                Email = email,
-                NIC = nic
+                ContactNumber = contactNumber,
+                NIC = nic,
+                GPA = gpa,
+                Gender = info.Gender,
+                DateOfBirth = info.DateOfBirth
             };
         }
 
@@ -64,8 +47,9 @@ namespace StudentManagementSystem.Domain.Entities
             string? firstName,
             string? lastName,
             string? address,
-            string? email,
-            string? nic)
+            string? nic,
+            double? gpa
+            )
         {
             if (!string.IsNullOrWhiteSpace(firstName))
                 ValidateFirstName(firstName);
@@ -73,16 +57,10 @@ namespace StudentManagementSystem.Domain.Entities
             if (!string.IsNullOrWhiteSpace(lastName))
                 ValidateLastName(lastName);
 
-            if (!string.IsNullOrWhiteSpace(email))
-                ValidateEmail(email);
-
-            if (!string.IsNullOrWhiteSpace(nic))
-                ValidateNIC(nic);
 
             FirstName = firstName ?? FirstName;
             LastName = lastName ?? LastName;
             Address = address ?? Address;
-            Email = email ?? Email;
             NIC = nic ?? NIC;
         }
 

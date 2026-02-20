@@ -36,7 +36,6 @@ namespace StudentManagementSystem.Application.Services
                 StudentId = student.Id,
                 FullName = $"{student.FirstName} {student.LastName}",
                 Address = student.Address,
-                Email = student.Email,
                 NIC = student.NIC,
                 EnrolledCourses = enrolledCourses.Select(ec => new CourseDto
                 {
@@ -68,20 +67,20 @@ namespace StudentManagementSystem.Application.Services
                 StudentId = s.Id,
                 FullName = $"{s.FirstName} {s.LastName}",
                 Address = s.Address,
-                Email = s.Email,
                 NIC = s.NIC
             }).ToList();
         }
 
         public async Task<int> CreateStudentAsync(CreateStudentDto dto)
         {
-            var newStudent = Student.Create(
-                dto.FirstName,
-                dto.LastName,
-                dto.Address,
-                dto.Email,
-                dto.NIC);
-            return await _studentRepository.CreateStudentAsync(newStudent);
+            //var newStudent = Student.Create(
+            //    dto.FirstName,
+            //    dto.LastName,
+            //    dto.Address,
+            //    dto.NIC);
+
+            //return await _studentRepository.CreateStudentAsync(newStudent);
+            return 1;
         }
 
         public async Task<StudentResponseDto> UpdateStudentDetailsAsync(UpdateStudentDto dto)
@@ -96,8 +95,8 @@ namespace StudentManagementSystem.Application.Services
                 dto.FirstName,
                 dto.LastName,
                 dto.Address,
-                dto.Email,
-                dto.NIC);
+                dto.NIC,
+                null);
 
             var affectedRows =
                 await _studentRepository.UpdateStudentDetailsAsync(student);

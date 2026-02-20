@@ -2,67 +2,46 @@
 
 namespace StudentManagementSystem.Domain.Entities
 {
-    public class Instructor : BaseEntity
+    public class Instructor : SystemUser
     {
-        public int Id { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public string? Email { get; set; }
-        public string? NIC { get; set; }
-        public string? Address { get; set; }
+        public int ExperienceYears { get; set; }
+        public decimal? PreferredSalary { get; set; }
+        public bool? IsApproved { get; set; }
 
         private Instructor() { }
-
-        public static void ValidateFirstName(string? firstName)
-        {
-            if (string.IsNullOrWhiteSpace(firstName))
-                throw new DomainException("First Name is required ...");
-        }
-
-        public static void ValidateLastName(string? lastName)
-        {
-            if (string.IsNullOrWhiteSpace(lastName))
-                throw new DomainException("Last Name is required ...");
-        }
-
-        public static void ValidateEmail(string? email)
-        {
-            if (!email.Contains("@gmail.com"))
-                throw new DomainException("Invalid Email Format ...");
-        }
-
-        public static void ValidateNIC(string? nic)
-        {
-            if (string.IsNullOrWhiteSpace(nic) || nic.Length < 10)
-                throw new DomainException("Invalid NIC ...");
-        }
 
         public static Instructor Create(
             string? firstName,
             string? lastName,
-            string? email,
+            string? address,
+            string? contactNumber,
             string? nic,
-            string? address)
+            int experienceYears,
+            decimal? preferredSalary
+            )
         {
             ValidateFirstName(firstName);
             ValidateLastName(lastName);
-            ValidateEmail(email);
-            ValidateNIC(nic);
+            ValidateContactNumber(contactNumber);
+            var info = ExtractNicInformation(nic);
 
             return new Instructor
             {
                 FirstName = firstName,
                 LastName = lastName,
-                Email = email,
+                Address = address,
+                ContactNumber = contactNumber,
                 NIC = nic,
-                Address = address
+                ExperienceYears = experienceYears,
+                PreferredSalary = preferredSalary,
+                DateOfBirth = info.DateOfBirth,
+                Gender = info.Gender
             };
         }
 
         public void Update(
             string? firstName,
             string? lastName,
-            string? email,
             string? nic,
             string? address)
         {
@@ -76,18 +55,6 @@ namespace StudentManagementSystem.Domain.Entities
             {
                 ValidateLastName(lastName);
                 LastName = lastName.Trim();
-            }
-
-            if (!string.IsNullOrWhiteSpace(email))
-            {
-                ValidateEmail(email);
-                Email = email.Trim();
-            }
-
-            if (!string.IsNullOrWhiteSpace(nic))
-            {
-                ValidateNIC(nic);
-                NIC = nic.Trim();
             }
 
             if (address != null)

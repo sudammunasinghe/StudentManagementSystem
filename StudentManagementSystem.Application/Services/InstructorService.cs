@@ -34,7 +34,6 @@ namespace StudentManagementSystem.Application.Services
             {
                 InstructorId = instructor.Id,
                 FullName = $"{instructor.FirstName} {instructor.LastName}",
-                Email = instructor.Email,
                 Address = instructor.Address,
                 NIC = instructor.NIC,
                 OwnCourses = ownCourses.Select(oc => new CourseDto
@@ -66,7 +65,6 @@ namespace StudentManagementSystem.Application.Services
             {
                 InstructorId = i.Id,
                 FullName = $"{i.FirstName} {i.LastName}",
-                Email = i.Email,
                 Address = i.Address,
                 NIC = i.NIC
             }).ToList();
@@ -74,14 +72,14 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<int> CreateInstructorAsync(CreateInstructorDto dto)
         {
-            var newInstructor = Instructor.Create(
-                dto.FirstName,
-                dto.LastName,
-                dto.Email,
-                dto.NIC,
-                dto.Address);
+            //var newInstructor = Instructor.Create(
+            //    dto.FirstName,
+            //    dto.LastName,
+            //    dto.NIC,
+            //    dto.Address);
 
-            return await _instructorRepository.CreateInstructorAsync(newInstructor);
+            //return await _instructorRepository.CreateInstructorAsync(newInstructor);
+            return 1;
         }
 
         public async Task<InstructorResponseDto> UpdateInstructorDetailsAsync(UpdateInstructorDto dto)
@@ -95,7 +93,6 @@ namespace StudentManagementSystem.Application.Services
             instructor.Update(
                 dto.FirstName,
                 dto.LastName,
-                dto.Email,
                 dto.NIC,
                 dto.Address);
 
@@ -109,7 +106,6 @@ namespace StudentManagementSystem.Application.Services
             {
                 InstructorId = instructor.Id,
                 FullName = $"{instructor.FirstName} {instructor.LastName}",
-                Email = instructor.Email,
                 Address = instructor.Address,
                 NIC = instructor.NIC
             };
