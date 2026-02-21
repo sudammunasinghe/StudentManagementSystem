@@ -4,8 +4,6 @@ using StudentManagementSystem.Application.DTOs.CourseContent;
 using StudentManagementSystem.Application.DTOs.Student;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
-using StudentManagementSystem.Domain.Entities;
-using System.Reflection;
 
 namespace StudentManagementSystem.Application.Services
 {
@@ -28,7 +26,7 @@ namespace StudentManagementSystem.Application.Services
             var enrolledCourses =
                 await _studentRepository.GetEnrolledCoursesByStudentIdAsync(stdId);
 
-            var enrolledCourseContents = 
+            var enrolledCourseContents =
                 await _studentRepository.GetCourseContentsByStudentIdAsync(stdId);
 
             return new StudentResponseDto

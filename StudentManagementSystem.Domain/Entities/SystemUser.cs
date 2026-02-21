@@ -1,9 +1,4 @@
 ﻿using StudentManagementSystem.Domain.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentManagementSystem.Domain.Entities
 {
@@ -46,12 +41,12 @@ namespace StudentManagementSystem.Domain.Entities
             int dayOfYear;
             char gender;
 
-            if(nic.Length == 10)
+            if (nic.Length == 10)
             {
                 dayOfYear = int.Parse(nic.Substring(2, 3));
                 year = 1900 + int.Parse(nic.Substring(0, 2));
             }
-            else if(nic.Length == 12)
+            else if (nic.Length == 12)
             {
                 dayOfYear = int.Parse(nic.Substring(4, 3));
                 year = int.Parse(nic.Substring(0, 4));
@@ -61,7 +56,7 @@ namespace StudentManagementSystem.Domain.Entities
                 throw new DomainException("Invalid NIC format ...");
             }
 
-            if(dayOfYear > 500)
+            if (dayOfYear > 500)
             {
                 gender = 'F';
                 dayOfYear -= 500;

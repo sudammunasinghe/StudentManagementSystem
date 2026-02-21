@@ -1,9 +1,4 @@
 ﻿using StudentManagementSystem.Domain.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentManagementSystem.Domain.Entities
 {
@@ -12,8 +7,7 @@ namespace StudentManagementSystem.Domain.Entities
         public int Id { get; set; }
         public string? Email { get; set; }
         public string? PasswordHash { get; set; }
-        public bool? IsStudent { get; set; }
-        public bool? IsInstructor { get; set; }
+        public int? RoleId { get; set; }
         private User() { }
 
         public static void ValidateEmail(string email)
@@ -31,8 +25,7 @@ namespace StudentManagementSystem.Domain.Entities
         public static User Create(
             string? email,
             string? password,
-            bool isStudent = false,
-            bool isInstructor = false
+            int? roleId
             )
         {
             ValidateEmail(email);
@@ -40,8 +33,7 @@ namespace StudentManagementSystem.Domain.Entities
             return new User
             {
                 Email = email,
-                IsStudent = isStudent,
-                IsInstructor = isInstructor
+                RoleId = roleId
             };
         }
     }

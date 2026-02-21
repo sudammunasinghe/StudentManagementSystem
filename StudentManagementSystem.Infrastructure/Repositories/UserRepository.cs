@@ -2,13 +2,6 @@
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Domain.Entities;
 using StudentManagementSystem.Domain.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentManagementSystem.Infrastructure.Repositories
 {
@@ -24,10 +17,10 @@ namespace StudentManagementSystem.Infrastructure.Repositories
         {
             var sql = @"
                     SELECT
+                        [Id],
 	                    [Email],
 	                    [PasswordHash],
-	                    [IsStudent],
-	                    [IsInstructor]
+                        [RoleId]
                     FROM [dbo].[User]
                     WHERE [IsActive] = 1 AND [Email] = @email;
             ";
@@ -48,21 +41,19 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                     (
                     	[Email],
                     	[PasswordHash],
-                    	[IsStudent],
-                    	[IsInstructor]
+                        [RoleId]
                     )
                     VALUES(
                     	@Email,
                         @PasswordHash,
-                        @IsStudent,
-                        @IsInstructor
+                        @RoleId
                     );
                     SELECT CAST(SCOPE_IDENTITY() AS INT);
                 ";
 
                 var userId = await db.QuerySingleAsync<int>(
                     userSql,
-                    new { Email = newUser.Email, PasswordHash = newUser.PasswordHash, IsStudent = newUser.IsStudent, IsInstructor = newUser.IsInstructor },
+                    new { Email = newUser.Email, PasswordHash = newUser.PasswordHash, RoleId = newUser.RoleId },
                     transaction
                 );
 
@@ -92,12 +83,13 @@ namespace StudentManagementSystem.Infrastructure.Repositories
 
                 await db.ExecuteAsync(
                     studentSql,
-                    new { 
-                        UserId = userId, 
-                        FirstName = studentDetails.FirstName, 
-                        LastName = studentDetails.LastName, 
-                        Address = studentDetails.Address, 
-                        NIC = studentDetails.NIC, 
+                    new
+                    {
+                        UserId = userId,
+                        FirstName = studentDetails.FirstName,
+                        LastName = studentDetails.LastName,
+                        Address = studentDetails.Address,
+                        NIC = studentDetails.NIC,
                         GPA = studentDetails.GPA,
                         DateOfBirth = studentDetails.DateOfBirth,
                         Gender = studentDetails.Gender
@@ -128,20 +120,18 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                     (
                     	[Email],
                     	[PasswordHash],
-                    	[IsStudent],
-                    	[IsInstructor]
+                        [RoleId]
                     )
                     VALUES(
                     	@Email,
                         @PasswordHash,
-                        @IsStudent,
-                        @IsInstructor
+                        @RoleId
                     );
                     SELECT CAST(SCOPE_IDENTITY() AS INT);
                 ";
                 var userId = await db.QuerySingleAsync<int>(
                     userSql,
-                    new { Email = newUser.Email, PasswordHash  = newUser.PasswordHash, IsStudent  = newUser.IsStudent, IsInstructor = newUser.IsInstructor },
+                    new { Email = newUser.Email, PasswordHash = newUser.PasswordHash, RoleId = newUser.RoleId },
                     transaction
                 );
 
@@ -172,13 +162,14 @@ namespace StudentManagementSystem.Infrastructure.Repositories
 
                 await db.ExecuteAsync(
                     instructorSql,
-                    new { 
-                        UserId  = userId, 
-                        FirstName  = instructorDetails.FirstName, 
+                    new
+                    {
+                        UserId = userId,
+                        FirstName = instructorDetails.FirstName,
                         LastName = instructorDetails.LastName,
-                        NIC  = instructorDetails.NIC, 
-                        Address = instructorDetails.Address, 
-                        ExperienceYears = instructorDetails.ExperienceYears, 
+                        NIC = instructorDetails.NIC,
+                        Address = instructorDetails.Address,
+                        ExperienceYears = instructorDetails.ExperienceYears,
                         PreferredSalary = instructorDetails.PreferredSalary,
                         DateOfBirth = instructorDetails.DateOfBirth,
                         Gender = instructorDetails.Gender

@@ -4,7 +4,6 @@ using StudentManagementSystem.Application.DTOs.CourseContent;
 using StudentManagementSystem.Application.DTOs.Instructor;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
-using StudentManagementSystem.Domain.Entities;
 
 namespace StudentManagementSystem.Application.Services
 {
@@ -24,10 +23,10 @@ namespace StudentManagementSystem.Application.Services
             if (instructor == null)
                 throw new NotFoundException("Instructor not found ...");
 
-            var ownCourses = 
+            var ownCourses =
                 await _instructorRepository.GetOwnCoursesByInstructorIdAsync(instructorId);
 
-            var ownCourseContents = 
+            var ownCourseContents =
                 await _instructorRepository.GetCourseContentByInstructorIdAsync(instructorId);
 
             return new InstructorResponseDto

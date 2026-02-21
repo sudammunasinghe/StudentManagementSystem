@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using StudentManagementSystem.Application.DTOs.Auth;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
+using StudentManagementSystem.Domain;
 using StudentManagementSystem.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentManagementSystem.Application.Services
 {
@@ -23,7 +23,7 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<string> RegisterNewStudentAsync(StudentRegistrationDetailsDto dto)
         {
-            var existingUser = 
+            var existingUser =
                 await _userRepository.GetUserByEmailAsync(dto.Email);
 
             if (existingUser != null)
@@ -32,7 +32,7 @@ namespace StudentManagementSystem.Application.Services
             var newUser = User.Create(
                     dto.Email,
                     dto.Password,
-                    true
+                    (int)Roles.Student
             );
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
             newUser.PasswordHash = passwordHash;
@@ -51,7 +51,7 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<string> RegisterNewInstructorAsync(InstructorRegistrationDetailsDto dto)
         {
-            var existingUser = 
+            var existingUser =
                 await _userRepository.GetUserByEmailAsync(dto.Email);
 
             if (existingUser != null)
@@ -60,8 +60,7 @@ namespace StudentManagementSystem.Application.Services
             var newUser = User.Create(
                 dto.Email,
                 dto.Password,
-                false,
-                true
+                (int)Roles.Instructor
             );
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
             newUser.PasswordHash = passwordHash;
@@ -77,7 +76,41 @@ namespace StudentManagementSystem.Application.Services
             );
 
             await _userRepository.CreateNewInstructorUserAsync(newUser, instructorDetails);
-            return "inserted";
+            return GenerateToken(newUser);
+        }
+
+        public async Task<string> LoginAsync(string email, string password)
+        {
+            var user =
+                await _userRepository.GetUserByEmailAsync(email);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+                throw new Exception("Invalid credentials ...");
+            return GenerateToken(user);
+        }
+
+        private string GenerateToken(User user)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, ((Roles)user.RoleId).ToString())
+            };
+
+            var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(3),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
