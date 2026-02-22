@@ -5,6 +5,7 @@ using StudentManagementSystem.Application.Interfaces.IServices;
 using StudentManagementSystem.Application.Services;
 using StudentManagementSystem.Domain.Persistence;
 using StudentManagementSystem.Infrastructure.Repositories;
+using StudentManagementSystem.Infrastructure.Security;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +38,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();
