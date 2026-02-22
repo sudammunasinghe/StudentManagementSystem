@@ -15,10 +15,14 @@ namespace StudentManagementSystem.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
-        public AuthService(IUserRepository userRepository, IConfiguration configuration)
+        private readonly IPasswordService _passwordService;
+        private readonly ICurrentUserService _currentUserService;
+        public AuthService(IUserRepository userRepository, IConfiguration configuration, IPasswordService passwordService, ICurrentUserService currentUserService)
         {
             _userRepository = userRepository;
             _configuration = configuration;
+            _passwordService = passwordService;
+            _currentUserService = currentUserService;
         }
 
         public async Task<string> RegisterNewStudentAsync(StudentRegistrationDetailsDto dto)
@@ -34,7 +38,7 @@ namespace StudentManagementSystem.Application.Services
                     dto.Password,
                     (int)Roles.Student
             );
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            var passwordHash = _passwordService.HashPassword(dto.Password);
             newUser.PasswordHash = passwordHash;
 
             var studentDetails = Student.Create(
@@ -46,7 +50,7 @@ namespace StudentManagementSystem.Application.Services
                 dto.GPA
             );
             await _userRepository.CreateNewStudentUserAsync(newUser, studentDetails);
-            return "inserted";
+            return GenerateToken(newUser);
         }
 
         public async Task<string> RegisterNewInstructorAsync(InstructorRegistrationDetailsDto dto)
@@ -62,7 +66,7 @@ namespace StudentManagementSystem.Application.Services
                 dto.Password,
                 (int)Roles.Instructor
             );
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+            var passwordHash = _passwordService.HashPassword(dto.Password);
             newUser.PasswordHash = passwordHash;
 
             var instructorDetails = Instructor.Create(
@@ -84,9 +88,60 @@ namespace StudentManagementSystem.Application.Services
             var user =
                 await _userRepository.GetUserByEmailAsync(email);
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+            if (user == null || !_passwordService.VerifyPassword(password, user.PasswordHash))
                 throw new Exception("Invalid credentials ...");
             return GenerateToken(user);
+        }
+
+        public async Task<string> ForgotPasswordAsync(ForgotPasswordDto dto)
+        {
+            var user = 
+                await _userRepository.GetUserByEmailAsync(dto.Email);
+
+            if (user == null)
+                return "If the email exists, a reset link has been sent...";
+
+            var token = TokenGenerator.GenerateToken();
+            var expiry = DateTime.Now.AddMinutes(5);
+
+            await _userRepository.SavePasswordResetTokenAsync(user.Id, token, expiry);
+            return "If the email exists, a reset link has been sent...";
+        }
+
+        public async Task<string> ResetPasswordAsync(ResetPasswordDto dto)
+        {
+            var user = 
+                await _userRepository.GetUserByResetTokenAsync(dto.Token);
+
+            if (user == null ||
+                user.PasswrodResetToken == null ||
+                user.PasswrodResetTokenExpiry < DateTime.Now
+             )
+                throw new Exception("Invalid or expired reset token ...");
+
+            var newPasswordHash = _passwordService.HashPassword(dto.NewPassword);
+            await _userRepository.UpdatePasswordAsync(user.Id, newPasswordHash);
+            return "Password has been reset successfully ...";
+        }
+
+        public async Task<string> ChangePasswordAsync(ChangePasswordDto dto)
+        {
+            int loggedUserId = _currentUserService.UserId;
+            var loggedUser = await _userRepository.GetUserByIdAsync(loggedUserId);
+
+            if (loggedUser == null)
+                throw new Exception("Unauthenticated User ...");
+
+            if (!_passwordService.VerifyPassword(dto.CurrentPassword, loggedUser.PasswordHash))
+                throw new Exception("Current password is incorrect ...");
+
+            if (_passwordService.VerifyPassword(dto.NewPassword, loggedUser.PasswordHash))
+                throw new Exception("New password should be differ from the current password ...");
+
+            var newPasswordHash = _passwordService.HashPassword(dto.NewPassword);
+
+            await _userRepository.UpdatePasswordAsync(loggedUser.Id, newPasswordHash);
+            return "Your password changed successfully ...";
         }
 
         private string GenerateToken(User user)

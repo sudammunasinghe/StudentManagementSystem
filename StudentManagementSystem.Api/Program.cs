@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ================================== Register Services ===================================================
 
 builder.Services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
@@ -34,6 +35,9 @@ builder.Services.AddScoped<ICourseContentRepository, CourseContentRepository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();
 
