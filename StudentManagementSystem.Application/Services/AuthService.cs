@@ -35,6 +35,11 @@ namespace StudentManagementSystem.Application.Services
                 throw new Exception("User already exists ...");
 
             var newUser = User.Create(
+                    dto.FirstName,
+                    dto.LastName,
+                    dto.Address,
+                    dto.NIC,
+                    dto.ConatctNumber,
                     dto.Email,
                     dto.Password,
                     (int)Roles.Student
@@ -43,11 +48,6 @@ namespace StudentManagementSystem.Application.Services
             newUser.PasswordHash = passwordHash;
 
             var studentDetails = Student.Create(
-                dto.FirstName,
-                dto.LastName,
-                dto.Address,
-                dto.ConatctNumber,
-                dto.NIC,
                 dto.GPA
             );
             await _userRepository.CreateNewStudentUserAsync(newUser, studentDetails);
@@ -63,6 +63,11 @@ namespace StudentManagementSystem.Application.Services
                 throw new Exception("User already exists ...");
 
             var newUser = User.Create(
+                dto.FirstName,
+                dto.LastName,
+                dto.Address,
+                dto.NIC,
+                dto.ConatctNumber,
                 dto.Email,
                 dto.Password,
                 (int)Roles.Instructor
@@ -71,11 +76,6 @@ namespace StudentManagementSystem.Application.Services
             newUser.PasswordHash = passwordHash;
 
             var instructorDetails = Instructor.Create(
-                dto.FirstName,
-                dto.LastName,
-                dto.Address,
-                dto.ConatctNumber,
-                dto.NIC,
                 dto.ExperienceYears,
                 dto.PreferredSalary
             );

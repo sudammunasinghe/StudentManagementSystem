@@ -9,54 +9,23 @@
         private Instructor() { }
 
         public static Instructor Create(
-            string? firstName,
-            string? lastName,
-            string? address,
-            string? contactNumber,
-            string? nic,
             int experienceYears,
             decimal? preferredSalary
             )
         {
-            ValidateFirstName(firstName);
-            ValidateLastName(lastName);
-            ValidateContactNumber(contactNumber);
-            var info = ExtractNicInformation(nic);
-
             return new Instructor
             {
-                FirstName = firstName,
-                LastName = lastName,
-                Address = address,
-                ContactNumber = contactNumber,
-                NIC = nic,
                 ExperienceYears = experienceYears,
-                PreferredSalary = preferredSalary,
-                DateOfBirth = info.DateOfBirth,
-                Gender = info.Gender
+                PreferredSalary = preferredSalary
             };
         }
 
         public void Update(
-            string? firstName,
-            string? lastName,
-            string? nic,
-            string? address)
+            int experienceYears,
+            decimal? preferredSalary
+            )
         {
-            if (!string.IsNullOrWhiteSpace(firstName))
-            {
-                ValidateFirstName(firstName);
-                FirstName = firstName.Trim();
-            }
-
-            if (!string.IsNullOrWhiteSpace(lastName))
-            {
-                ValidateLastName(lastName);
-                LastName = lastName.Trim();
-            }
-
-            if (address != null)
-                Address = address;
+            
         }
     }
 }

@@ -3,6 +3,8 @@ using Newtonsoft.Json.Linq;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Domain.Entities;
 using StudentManagementSystem.Domain.Persistence;
+using System.Net;
+using System.Reflection;
 
 namespace StudentManagementSystem.Infrastructure.Repositories
 {
@@ -19,6 +21,13 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             var sql = @"
                     SELECT
                         [Id],
+                        [FirstName], 
+	                    [LastName], 
+                        [ContactNumber],
+	                    [Address], 
+	                    [NIC], 
+	                    [DateOfBirth],
+	                    [Gender],
 	                    [Email],
 	                    [PasswordHash],
                         [RoleId]
@@ -34,6 +43,13 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             var sql = @"
                  SELECT
                         [Id],
+                        [FirstName], 
+	                    [LastName], 
+                        [ContactNumber],
+	                    [Address], 
+	                    [NIC], 
+	                    [DateOfBirth],
+	                    [Gender],
 	                    [Email],
 	                    [PasswordHash],
                         [RoleId]
@@ -55,11 +71,25 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                 var userSql = @"
                     INSERT  INTO [dbo].[User]
                     (
+	                    [FirstName], 
+	                    [LastName], 
+                        [ContactNumber],
+	                    [Address], 
+	                    [NIC], 
+	                    [DateOfBirth],
+	                    [Gender],
                     	[Email],
                     	[PasswordHash],
                         [RoleId]
                     )
                     VALUES(
+                        @FirstName,
+                        @LastName,
+                        @ContactNumber,
+                        @Address,
+                        @NIC,
+                        @DateOfBirth,
+                        @Gender,
                     	@Email,
                         @PasswordHash,
                         @RoleId
@@ -69,47 +99,36 @@ namespace StudentManagementSystem.Infrastructure.Repositories
 
                 var userId = await db.QuerySingleAsync<int>(
                     userSql,
-                    new { Email = newUser.Email, PasswordHash = newUser.PasswordHash, RoleId = newUser.RoleId },
+                    new {
+                        FirstName = newUser.FirstName,
+                        LastName = newUser.LastName,
+                        ContactNumber = newUser.ContactNumber,
+                        Address = newUser.Address,
+                        NIC = newUser.NIC,
+                        DateOfBirth = newUser.DateOfBirth,
+                        Gender = newUser.Gender,
+                        Email = newUser.Email, 
+                        PasswordHash = newUser.PasswordHash, 
+                        RoleId = newUser.RoleId 
+                    },
                     transaction
                 );
 
                 var studentSql = @"
                     INSERT INTO [dbo].[Student](
                         [UserId],
-                        [FirstName],
-                        [LastName],
-                        [Address],
-                        [NIC],
-                        [DateOfBirth],
-                        [Gender],
                         [GPA]
                     ) 
                     VALUES
                     (
                         @UserId,
-                        @FirstName,
-                        @LastName,
-                        @Address,
-                        @NIC,
-                        @DateOfBirth,
-                        @Gender,
                         @GPA
                     ); 
                 ";
 
                 await db.ExecuteAsync(
                     studentSql,
-                    new
-                    {
-                        UserId = userId,
-                        FirstName = studentDetails.FirstName,
-                        LastName = studentDetails.LastName,
-                        Address = studentDetails.Address,
-                        NIC = studentDetails.NIC,
-                        GPA = studentDetails.GPA,
-                        DateOfBirth = studentDetails.DateOfBirth,
-                        Gender = studentDetails.Gender
-                    },
+                    new { UserId = userId, GPA = studentDetails.GPA },
                     transaction
                 );
 
@@ -134,11 +153,25 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                 var userSql = @"
                     INSERT INTO [dbo].[User]
                     (
+                    	[FirstName], 
+	                    [LastName], 
+                        [ContactNumber],
+	                    [Address], 
+	                    [NIC], 
+	                    [DateOfBirth],
+	                    [Gender],
                     	[Email],
                     	[PasswordHash],
                         [RoleId]
                     )
                     VALUES(
+                    	@FirstName,
+                        @LastName,
+                        @ContactNumber,
+                        @Address,
+                        @NIC,
+                        @DateOfBirth,
+                        @Gender,
                     	@Email,
                         @PasswordHash,
                         @RoleId
@@ -147,30 +180,29 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                 ";
                 var userId = await db.QuerySingleAsync<int>(
                     userSql,
-                    new { Email = newUser.Email, PasswordHash = newUser.PasswordHash, RoleId = newUser.RoleId },
+                    new {
+                        FirstName = newUser.FirstName,
+                        LastName = newUser.LastName,
+                        ContactNumber = newUser.ContactNumber,
+                        Address = newUser.Address,
+                        NIC = newUser.NIC,
+                        DateOfBirth = newUser.DateOfBirth,
+                        Gender = newUser.Gender,
+                        Email = newUser.Email, 
+                        PasswordHash = newUser.PasswordHash, 
+                        RoleId = newUser.RoleId 
+                    },
                     transaction
                 );
 
                 var instructorSql = @"
                     INSERT INTO [dbo].[Instructor](
                         [UserId],
-                        [FirstName],
-                        [LastName],
-                        [Address],
-                        [NIC],
-                        [DateOfBirth],
-                        [Gender],
                         [ExperienceYears],
                         [PreferredSalary]
 
                     ) VALUES (
                         @UserId,
-                        @FirstName,
-                        @LastName,
-                        @Address,
-                        @NIC,
-                        @DateOfBirth,
-                        @Gender,
                         @ExperienceYears,
                         @PreferredSalary
                     );
@@ -178,18 +210,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
 
                 await db.ExecuteAsync(
                     instructorSql,
-                    new
-                    {
-                        UserId = userId,
-                        FirstName = instructorDetails.FirstName,
-                        LastName = instructorDetails.LastName,
-                        NIC = instructorDetails.NIC,
-                        Address = instructorDetails.Address,
-                        ExperienceYears = instructorDetails.ExperienceYears,
-                        PreferredSalary = instructorDetails.PreferredSalary,
-                        DateOfBirth = instructorDetails.DateOfBirth,
-                        Gender = instructorDetails.Gender
-                    },
+                    new { UserId = userId, ExperienceYears = instructorDetails.ExperienceYears, PreferredSalary = instructorDetails.PreferredSalary },
                     transaction
                 );
                 transaction.Commit();
@@ -221,6 +242,13 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             var sql = @"
                 SELECT
                     [Id],
+                    [FirstName], 
+	                [LastName], 
+                    [ContactNumber],
+	                [Address], 
+	                [NIC], 
+	                [DateOfBirth],
+	                [Gender],
 	                [Email],
 	                [PasswordHash],
                     [RoleId],

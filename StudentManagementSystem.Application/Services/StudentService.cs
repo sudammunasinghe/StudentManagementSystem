@@ -32,9 +32,6 @@ namespace StudentManagementSystem.Application.Services
             return new StudentResponseDto
             {
                 StudentId = student.Id,
-                FullName = $"{student.FirstName} {student.LastName}",
-                Address = student.Address,
-                NIC = student.NIC,
                 EnrolledCourses = enrolledCourses.Select(ec => new CourseDto
                 {
                     CourseId = ec.Id,
@@ -62,10 +59,7 @@ namespace StudentManagementSystem.Application.Services
 
             return students.Select(s => new StudentResponseDto
             {
-                StudentId = s.Id,
-                FullName = $"{s.FirstName} {s.LastName}",
-                Address = s.Address,
-                NIC = s.NIC
+                StudentId = s.Id
             }).ToList();
         }
 
@@ -90,11 +84,8 @@ namespace StudentManagementSystem.Application.Services
                 throw new NotFoundException("Student not found ...");
 
             student.Update(
-                dto.FirstName,
-                dto.LastName,
-                dto.Address,
-                dto.NIC,
-                null);
+                3.00
+                );
 
             var affectedRows =
                 await _studentRepository.UpdateStudentDetailsAsync(student);

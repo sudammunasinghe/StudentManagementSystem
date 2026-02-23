@@ -32,9 +32,6 @@ namespace StudentManagementSystem.Application.Services
             return new InstructorResponseDto
             {
                 InstructorId = instructor.Id,
-                FullName = $"{instructor.FirstName} {instructor.LastName}",
-                Address = instructor.Address,
-                NIC = instructor.NIC,
                 OwnCourses = ownCourses.Select(oc => new CourseDto
                 {
                     CourseId = oc.Id,
@@ -63,9 +60,6 @@ namespace StudentManagementSystem.Application.Services
             return instructors.Select(i => new InstructorResponseDto
             {
                 InstructorId = i.Id,
-                FullName = $"{i.FirstName} {i.LastName}",
-                Address = i.Address,
-                NIC = i.NIC
             }).ToList();
         }
 
@@ -90,10 +84,8 @@ namespace StudentManagementSystem.Application.Services
                 throw new NotFoundException("Instructor not found ...");
 
             instructor.Update(
-                dto.FirstName,
-                dto.LastName,
-                dto.NIC,
-                dto.Address);
+                1,2
+               );
 
             var affectedRows =
                 await _instructorRepository.UpdateInstructorDetailsAsync(instructor);
@@ -103,10 +95,7 @@ namespace StudentManagementSystem.Application.Services
 
             return new InstructorResponseDto
             {
-                InstructorId = instructor.Id,
-                FullName = $"{instructor.FirstName} {instructor.LastName}",
-                Address = instructor.Address,
-                NIC = instructor.NIC
+                InstructorId = instructor.Id
             };
         }
 
