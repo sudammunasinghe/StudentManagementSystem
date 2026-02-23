@@ -37,6 +37,9 @@ builder.Services.AddScoped<ICourseContentRepository, CourseContentRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();
 builder.Services.AddHttpContextAccessor();

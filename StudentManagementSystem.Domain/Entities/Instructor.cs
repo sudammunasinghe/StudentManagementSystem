@@ -5,6 +5,7 @@
         public int ExperienceYears { get; set; }
         public decimal? PreferredSalary { get; set; }
         public bool? IsApproved { get; set; }
+        public List<InstructorExperience>? InstructorExperiences { get; set; }
 
         private Instructor() { }
 
@@ -16,7 +17,8 @@
             return new Instructor
             {
                 ExperienceYears = experienceYears,
-                PreferredSalary = preferredSalary
+                PreferredSalary = preferredSalary,
+                InstructorExperiences = new List<InstructorExperience>()
             };
         }
 
@@ -25,7 +27,7 @@
             decimal? preferredSalary
             )
         {
-            
+
         }
     }
 }

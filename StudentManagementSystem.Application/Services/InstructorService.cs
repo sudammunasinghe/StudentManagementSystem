@@ -84,7 +84,7 @@ namespace StudentManagementSystem.Application.Services
                 throw new NotFoundException("Instructor not found ...");
 
             instructor.Update(
-                1,2
+                1, 2
                );
 
             var affectedRows =

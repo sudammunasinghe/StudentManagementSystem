@@ -1,13 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using StudentManagementSystem.Application.DTOs.Auth;
+﻿using StudentManagementSystem.Application.DTOs.Auth;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
 using StudentManagementSystem.Domain;
 using StudentManagementSystem.Domain.Entities;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace StudentManagementSystem.Application.Services
 {
@@ -47,9 +42,23 @@ namespace StudentManagementSystem.Application.Services
             var passwordHash = _passwordService.HashPassword(dto.Password);
             newUser.PasswordHash = passwordHash;
 
-            var studentDetails = Student.Create(
-                dto.GPA
-            );
+            var studentDetails = Student.Create(dto.GPA);
+            if (dto.EducationalDetails != null && dto.EducationalDetails.Any())
+            {
+                foreach (var edu in dto.EducationalDetails)
+                {
+                    studentDetails.EducationDetails.Add(new Education
+                    {
+                        Institute = edu.Institute,
+                        Degree = edu.Degree,
+                        Major = edu.Major,
+                        StartingDate = edu.StartingDate,
+                        EndingDate = edu.EndingDate,
+                        IsStudying = edu.IsStudying,
+                        Description = edu.Description
+                    });
+                }
+            }
             await _userRepository.CreateNewStudentUserAsync(newUser, studentDetails);
             return _tokenGeneratorService.GenerateJwtToken(newUser);
         }
@@ -80,6 +89,25 @@ namespace StudentManagementSystem.Application.Services
                 dto.PreferredSalary
             );
 
+            if (dto.InstructorExperienceDetails != null && dto.InstructorExperienceDetails.Any())
+            {
+                foreach (var exp in dto.InstructorExperienceDetails)
+                {
+                    instructorDetails.InstructorExperiences.Add(new InstructorExperience
+                    {
+                        CompanyName = exp.CompanyName,
+                        JobTitle = exp.JobTitle,
+                        EmployementType = exp.EmployementType,
+                        Location = exp.Location,
+                        StartDate = exp.StartDate,
+                        EndDate = exp.EndDate,
+                        IsCurrentlyWorking = exp.IsCurrentlyWorking,
+                        Description = exp.Description
+
+                    });
+                }
+            }
+
             await _userRepository.CreateNewInstructorUserAsync(newUser, instructorDetails);
             return _tokenGeneratorService.GenerateJwtToken(newUser);
         }
@@ -96,7 +124,7 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<string> ForgotPasswordAsync(ForgotPasswordDto dto)
         {
-            var user = 
+            var user =
                 await _userRepository.GetUserByEmailAsync(dto.Email);
 
             if (user == null)
@@ -111,7 +139,7 @@ namespace StudentManagementSystem.Application.Services
 
         public async Task<string> ResetPasswordAsync(ResetPasswordDto dto)
         {
-            var user = 
+            var user =
                 await _userRepository.GetUserByResetTokenAsync(dto.Token);
 
             if (user == null ||

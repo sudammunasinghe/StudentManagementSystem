@@ -1,10 +1,7 @@
 ﻿using Dapper;
-using Newtonsoft.Json.Linq;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Domain.Entities;
 using StudentManagementSystem.Domain.Persistence;
-using System.Net;
-using System.Reflection;
 
 namespace StudentManagementSystem.Infrastructure.Repositories
 {
@@ -97,9 +94,10 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                     SELECT CAST(SCOPE_IDENTITY() AS INT);
                 ";
 
-                var userId = await db.QuerySingleAsync<int>(
+                var userId = await db.ExecuteScalarAsync<int>(
                     userSql,
-                    new {
+                    new
+                    {
                         FirstName = newUser.FirstName,
                         LastName = newUser.LastName,
                         ContactNumber = newUser.ContactNumber,
@@ -107,9 +105,9 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                         NIC = newUser.NIC,
                         DateOfBirth = newUser.DateOfBirth,
                         Gender = newUser.Gender,
-                        Email = newUser.Email, 
-                        PasswordHash = newUser.PasswordHash, 
-                        RoleId = newUser.RoleId 
+                        Email = newUser.Email,
+                        PasswordHash = newUser.PasswordHash,
+                        RoleId = newUser.RoleId
                     },
                     transaction
                 );
@@ -124,13 +122,57 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                         @UserId,
                         @GPA
                     ); 
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);
                 ";
 
-                await db.ExecuteAsync(
+                var studentId = await db.ExecuteScalarAsync<int>(
                     studentSql,
                     new { UserId = userId, GPA = studentDetails.GPA },
                     transaction
                 );
+
+                var educationSql = @"
+                    INSERT INTO [dbo].[Education]
+                    (
+                    	[StudentId],
+                    	[Institute],
+                    	[Degree],
+                    	[Major],
+                    	[StartingDate],
+                    	[EndingDate],
+                    	[IsStudying],
+                    	[Description]
+                    )
+                    VALUES(
+                    	@StudentId,
+                    	@Institute,
+                    	@Degree,
+                    	@Major,
+                    	@StartingDate,
+                    	@EndingDate,
+                    	@IsStudying,
+                    	@Description
+                    )
+                ";
+
+                foreach (var edu in studentDetails.EducationDetails)
+                {
+                    await db.ExecuteAsync(
+                        educationSql,
+                        new
+                        {
+                            StudentId = studentId,
+                            Institute = edu.Institute,
+                            Degree = edu.Degree,
+                            Major = edu.Major,
+                            StartingDate = edu.StartingDate,
+                            EndingDate = edu.EndingDate,
+                            IsStudying = edu.IsStudying,
+                            Description = edu.Description
+                        },
+                        transaction
+                    );
+                }
 
                 transaction.Commit();
                 return userId;
@@ -164,7 +206,8 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                     	[PasswordHash],
                         [RoleId]
                     )
-                    VALUES(
+                    VALUES
+                    (
                     	@FirstName,
                         @LastName,
                         @ContactNumber,
@@ -178,9 +221,10 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                     );
                     SELECT CAST(SCOPE_IDENTITY() AS INT);
                 ";
-                var userId = await db.QuerySingleAsync<int>(
+                var userId = await db.ExecuteScalarAsync<int>(
                     userSql,
-                    new {
+                    new
+                    {
                         FirstName = newUser.FirstName,
                         LastName = newUser.LastName,
                         ContactNumber = newUser.ContactNumber,
@@ -188,9 +232,9 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                         NIC = newUser.NIC,
                         DateOfBirth = newUser.DateOfBirth,
                         Gender = newUser.Gender,
-                        Email = newUser.Email, 
-                        PasswordHash = newUser.PasswordHash, 
-                        RoleId = newUser.RoleId 
+                        Email = newUser.Email,
+                        PasswordHash = newUser.PasswordHash,
+                        RoleId = newUser.RoleId
                     },
                     transaction
                 );
@@ -201,18 +245,69 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                         [ExperienceYears],
                         [PreferredSalary]
 
-                    ) VALUES (
+                    ) 
+                    VALUES 
+                    (
                         @UserId,
                         @ExperienceYears,
                         @PreferredSalary
                     );
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);
                 ";
 
-                await db.ExecuteAsync(
+                var instructorId = await db.ExecuteScalarAsync<int>(
                     instructorSql,
                     new { UserId = userId, ExperienceYears = instructorDetails.ExperienceYears, PreferredSalary = instructorDetails.PreferredSalary },
                     transaction
                 );
+
+                var experienceDetailsSql = @"
+                    INSERT INTO [dbo].[InstructorExperience]
+                    (
+                    	[InstructorId],
+                    	[CompanyName],
+                    	[JobTitle],
+                    	[EmployementType],
+                    	[Location],
+                    	[StartDate],
+                    	[EndDate],
+                    	[IsCurrentlyWorking],
+                    	[Description]
+                    )
+                    VALUES
+                    (
+                    	@InstructorId,
+                    	@CompanyName,
+                    	@JobTitle,
+                    	@EmployementType,
+                    	@Location,
+                    	@StartDate,
+                    	@EndDate,
+                    	@IsCurrentlyWorking,
+                    	@Description
+                    )
+                ";
+
+                foreach (var exp in instructorDetails.InstructorExperiences)
+                {
+                    await db.ExecuteAsync(
+                        experienceDetailsSql,
+                        new
+                        {
+                            InstructorId = instructorId,
+                            CompanyName = exp.CompanyName,
+                            JobTitle = exp.JobTitle,
+                            EmployementType = exp.EmployementType,
+                            Location = exp.Location,
+                            StartDate = exp.StartDate,
+                            EndDate = exp.EndDate,
+                            IsCurrentlyWorking = exp.IsCurrentlyWorking,
+                            Description = exp.Description
+                        },
+                        transaction
+                    );
+                }
+
                 transaction.Commit();
                 return userId;
             }
@@ -274,7 +369,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                 WHERE [Id] = @UserId
             ";
             using var db = _connectionFactory.CreateConnection();
-            await db.ExecuteAsync(sql, new { UserId  = userId, NewPasswordHash  = newPasswordHash });
+            await db.ExecuteAsync(sql, new { UserId = userId, NewPasswordHash = newPasswordHash });
         }
     }
 }

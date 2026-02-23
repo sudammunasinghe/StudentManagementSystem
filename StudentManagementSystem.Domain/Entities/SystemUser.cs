@@ -1,6 +1,4 @@
-﻿using StudentManagementSystem.Domain.Exceptions;
-
-namespace StudentManagementSystem.Domain.Entities
+﻿namespace StudentManagementSystem.Domain.Entities
 {
     public class SystemUser : BaseEntity
     {

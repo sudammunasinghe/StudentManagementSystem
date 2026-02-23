@@ -18,7 +18,7 @@ namespace StudentManagementSystem.Api.Controllers
 
         [HttpPost("register/student")]
         [AllowAnonymous]
-        public async Task<ActionResult<ApiResponse<string>>> RegisterNewStudentAsync([FromForm] StudentRegistrationDetailsDto dto)
+        public async Task<ActionResult<ApiResponse<string>>> RegisterNewStudentAsync([FromBody] StudentRegistrationDetailsDto dto)
         {
             var result = await _authService.RegisterNewStudentAsync(dto);
             return Ok(new ApiResponse<string>
@@ -30,7 +30,7 @@ namespace StudentManagementSystem.Api.Controllers
 
         [HttpPost("register/instructor")]
         [AllowAnonymous]
-        public async Task<ActionResult<ApiResponse<string>>> RegisterNewInstructorAsync([FromForm] InstructorRegistrationDetailsDto dto)
+        public async Task<ActionResult<ApiResponse<string>>> RegisterNewInstructorAsync([FromBody] InstructorRegistrationDetailsDto dto)
         {
             var result = await _authService.RegisterNewInstructorAsync(dto);
             return Ok(new ApiResponse<string>
@@ -53,7 +53,8 @@ namespace StudentManagementSystem.Api.Controllers
         public async Task<ActionResult<ApiResponse<string>>> ForgotPasswordAsync([FromForm] ForgotPasswordDto dto)
         {
             var result = await _authService.ForgotPasswordAsync(dto);
-            return Ok(new ApiResponse<string>{
+            return Ok(new ApiResponse<string>
+            {
                 Success = true,
                 Message = result
             });

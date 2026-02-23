@@ -5,6 +5,7 @@ namespace StudentManagementSystem.Domain.Entities
     public class Student : SystemUser
     {
         public double? GPA { get; set; }
+        public List<Education>? EducationDetails { get; set; }
 
         private Student() { }
 
@@ -20,7 +21,8 @@ namespace StudentManagementSystem.Domain.Entities
         {
             return new Student
             {
-                GPA = gpa
+                GPA = gpa,
+                EducationDetails = new List<Education>()
             };
         }
 

@@ -1,12 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using StudentManagementSystem.Application.Interfaces.IServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace StudentManagementSystem.Application.Services
 {
@@ -36,8 +30,18 @@ namespace StudentManagementSystem.Application.Services
             _httpContextAccessor.HttpContext?
                 .User.FindFirst(ClaimTypes.Email)?.Value;
 
-        public string? Role =>
-            _httpContextAccessor.HttpContext?
-                .User.FindFirst(ClaimTypes.Role)?.Value;
+        public string? Role
+        {
+            get
+            {
+                var roleClaim = _httpContextAccessor.HttpContext?
+                    .User.FindFirst(ClaimTypes.Role);
+
+                if (roleClaim == null)
+                    throw new Exception("Unauthorized ...");
+
+                return roleClaim.Value;
+            }
+        }
     }
 }
