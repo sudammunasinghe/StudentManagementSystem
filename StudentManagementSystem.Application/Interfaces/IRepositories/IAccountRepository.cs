@@ -6,5 +6,6 @@ namespace StudentManagementSystem.Application.Interfaces.IRepositories
     {
         Task<List<Education>> GetEducationalDetailsByUserIdAsync(int userId);
         Task<List<InstructorExperience>> GetInstructorExperienceDetailsByUserIdAsync(int userId);
+        Task UpdateProfileDetailsAsync(ProfileEntity profile, string role);
     }
 }

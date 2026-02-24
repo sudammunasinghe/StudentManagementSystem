@@ -28,5 +28,16 @@ namespace StudentManagementSystem.Api.Controllers
                 Message = "Profile details retrieved successfully ..."
             });
         }
+
+        [HttpPut("profile")]
+        public async Task<ActionResult<ApiResponse<string>>> UpdateProfileDetailsAsync([FromBody] UpdateProfileDetailsDto dto)
+        {
+            await _accountService.UpdateProfileDetailsAsync(dto);
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Profile data updated successfully ..."
+            });
+        }
     }
 }

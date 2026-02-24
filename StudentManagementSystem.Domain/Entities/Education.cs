@@ -2,7 +2,7 @@
 {
     public class Education : BaseEntity
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public int? StudentId { get; set; }
         public string? Institute { get; set; }
         public string? Degree { get; set; }
