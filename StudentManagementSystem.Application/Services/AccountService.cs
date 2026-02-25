@@ -1,6 +1,7 @@
 ﻿using StudentManagementSystem.Application.DTOs.Account;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
+using StudentManagementSystem.Domain;
 using StudentManagementSystem.Domain.Entities;
 
 namespace StudentManagementSystem.Application.Services
@@ -23,14 +24,14 @@ namespace StudentManagementSystem.Application.Services
             var loggedUserRole = _currentUserService.Role;
 
             if (loggedUserId == null)
-                throw new Exception("Unauthenticated user ...");
+                throw new UnauthorizedAccessException("Unauthenticated user ...");
 
             var user =
                 await _userRepository.GetUserByIdAsync(loggedUserId);
 
             var profileDetails = new ProfileDetailsDto
             {
-                RegistrationNumber = null,
+                RegistrationNumber = user.RegistrationNumber,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Address = user.Address,
@@ -41,7 +42,7 @@ namespace StudentManagementSystem.Application.Services
                 InstructorExperienceDetails = null
             };
 
-            if (loggedUserRole == "Student")
+            if (loggedUserRole == nameof(Roles.Student))
             {
                 var educationalDetails =
                     await _accountRepository.GetEducationalDetailsByUserIdAsync(loggedUserId);
@@ -60,7 +61,7 @@ namespace StudentManagementSystem.Application.Services
                         Description = ed.Description
                     }).ToList();
             }
-            else if (loggedUserRole == "Instructor")
+            else if (loggedUserRole == nameof(Roles.Instructor))
             {
                 var instructorExperienceDetails =
                     await _accountRepository.GetInstructorExperienceDetailsByUserIdAsync(loggedUserId);
@@ -86,16 +87,27 @@ namespace StudentManagementSystem.Application.Services
         public async Task UpdateProfileDetailsAsync(UpdateProfileDetailsDto dto)
         {
             var loggedUserRole = _currentUserService.Role;
+            var loggedUserId = _currentUserService.UserId;
+            var user = await _userRepository.GetUserByIdAsync(loggedUserId);
+
+            user?.Update(
+                dto.FirstName,
+                dto.LastName,
+                dto.Address,
+                dto.NIC,
+                dto.ContactNumber,
+                dto.Email
+                );
             var updatedProfile = new ProfileEntity
             {
-                Id = dto.Id,
+                Id = loggedUserId,
                 RegistrationNumber = dto.RegistrationNumber,
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Address = dto.Address,
-                ContactNumber = dto.ContactNumber,
-                Email = dto.Email,
-                NIC = dto.NIC,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Address = user.Address,
+                ContactNumber = user.ContactNumber,
+                Email = user.Email,
+                NIC = user.NIC,
                 EducationalDetails = dto.EducationalDetails?
                     .Select(edu => new Education
                     {

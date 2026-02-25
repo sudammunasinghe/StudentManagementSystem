@@ -8,6 +8,5 @@ namespace StudentManagementSystem.Application.DTOs.Account
 {
     public class UpdateProfileDetailsDto : ProfileDetailsDto
     {
-        public int? Id { get; set; }
     }
 }

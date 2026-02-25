@@ -5,6 +5,7 @@ namespace StudentManagementSystem.Domain.Entities
     public class User : BaseEntity
     {
         public int Id { get; set; }
+        public string? RegistrationNumber { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? ContactNumber { get; set; }
@@ -122,6 +123,30 @@ namespace StudentManagementSystem.Domain.Entities
                 DateOfBirth = info.DateOfBirth,
                 Gender = info.Gender
             };
+        }
+
+        public void Update(
+            string? firstName,
+            string? lastName,
+            string? address,
+            string? nic,
+            string? contactNumber,
+            string? email
+            )
+        {
+            ValidateFirstName(firstName);
+            ValidateLastName(lastName);
+            ValidateContactNumber(contactNumber);
+            ValidateEmail(email);
+            var info = ExtractNicInformation(nic);
+
+            FirstName = firstName;
+            LastName = lastName;
+            Address = address;
+            ContactNumber = contactNumber;
+            Email = email;
+            DateOfBirth = info.DateOfBirth;
+            Gender = info.Gender;
         }
     }
 }

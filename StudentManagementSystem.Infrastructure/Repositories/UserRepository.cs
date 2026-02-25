@@ -18,6 +18,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             var sql = @"
                     SELECT
                         [Id],
+                        [RegistrationNumber],
                         [FirstName], 
 	                    [LastName], 
                         [ContactNumber],
@@ -40,6 +41,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             var sql = @"
                  SELECT
                         [Id],
+                        [RegistrationNumber],
                         [FirstName], 
 	                    [LastName], 
                         [ContactNumber],
@@ -131,49 +133,62 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                     transaction
                 );
 
-                var educationSql = @"
-                    INSERT INTO [dbo].[Education]
-                    (
-                    	[StudentId],
-                    	[Institute],
-                    	[Degree],
-                    	[Major],
-                    	[StartingDate],
-                    	[EndingDate],
-                    	[IsStudying],
-                    	[Description]
-                    )
-                    VALUES(
-                    	@StudentId,
-                    	@Institute,
-                    	@Degree,
-                    	@Major,
-                    	@StartingDate,
-                    	@EndingDate,
-                    	@IsStudying,
-                    	@Description
-                    )
+                //Generate registration number and update the user table
+                var registrationNumber = $"STD/{DateTime.UtcNow.Year}/{studentId:D4}";
+                var updateRegistrationNumberSql = @"
+                    UPDATE [dbo].[User]
+                    SET
+                        [RegistrationNumber] = @RegistrationNumber,
+                        [LastModifiedDateTime] = GETDATE()
+                    WHERE [Id] = @UserId;
                 ";
+                await db.ExecuteAsync(updateRegistrationNumberSql, new { UserId = userId, RegistrationNumber = registrationNumber }, transaction);
 
-                foreach (var edu in studentDetails.EducationDetails)
+                if (studentDetails.EducationDetails != null && studentDetails.EducationDetails.Any())
                 {
-                    await db.ExecuteAsync(
-                        educationSql,
-                        new
-                        {
-                            StudentId = studentId,
-                            Institute = edu.Institute,
-                            Degree = edu.Degree,
-                            Major = edu.Major,
-                            StartingDate = edu.StartingDate,
-                            EndingDate = edu.EndingDate,
-                            IsStudying = edu.IsStudying,
-                            Description = edu.Description
-                        },
-                        transaction
-                    );
-                }
+                    var educationSql = @"
+                        INSERT INTO [dbo].[Education]
+                        (
+                        	[StudentId],
+                        	[Institute],
+                        	[Degree],
+                        	[Major],
+                        	[StartingDate],
+                        	[EndingDate],
+                        	[IsStudying],
+                        	[Description]
+                        )
+                        VALUES(
+                        	@StudentId,
+                        	@Institute,
+                        	@Degree,
+                        	@Major,
+                        	@StartingDate,
+                        	@EndingDate,
+                        	@IsStudying,
+                        	@Description
+                        )
+                    ";
 
+                    foreach (var edu in studentDetails.EducationDetails)
+                    {
+                        await db.ExecuteAsync(
+                            educationSql,
+                            new
+                            {
+                                StudentId = studentId,
+                                Institute = edu.Institute,
+                                Degree = edu.Degree,
+                                Major = edu.Major,
+                                StartingDate = edu.StartingDate,
+                                EndingDate = edu.EndingDate,
+                                IsStudying = edu.IsStudying,
+                                Description = edu.Description
+                            },
+                            transaction
+                        );
+                    }
+                }
                 transaction.Commit();
                 return userId;
             }
@@ -261,53 +276,66 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                     transaction
                 );
 
-                var experienceDetailsSql = @"
-                    INSERT INTO [dbo].[InstructorExperience]
-                    (
-                    	[InstructorId],
-                    	[CompanyName],
-                    	[JobTitle],
-                    	[EmployementType],
-                    	[Location],
-                    	[StartDate],
-                    	[EndDate],
-                    	[IsCurrentlyWorking],
-                    	[Description]
-                    )
-                    VALUES
-                    (
-                    	@InstructorId,
-                    	@CompanyName,
-                    	@JobTitle,
-                    	@EmployementType,
-                    	@Location,
-                    	@StartDate,
-                    	@EndDate,
-                    	@IsCurrentlyWorking,
-                    	@Description
-                    )
+                //Generate registration number and update the user table
+                var registrationNumber = $"INS/{DateTime.UtcNow.Year}/{instructorId:D4}";
+                var updateRegistrationNumberSql = @"
+                    UPDATE [dbo].[User]
+                        SET
+                            [RegistrationNumber] = @RegistrationNumber,
+                            [LastModifiedDateTime] = GETDATE()
+                        WHERE [Id] = @UserId;
                 ";
+                await db.ExecuteAsync(updateRegistrationNumberSql, new { UserId  = userId, RegistrationNumber = registrationNumber }, transaction );
 
-                foreach (var exp in instructorDetails.InstructorExperiences)
+                if (instructorDetails.InstructorExperiences != null && instructorDetails.InstructorExperiences.Any())
                 {
-                    await db.ExecuteAsync(
-                        experienceDetailsSql,
-                        new
-                        {
-                            InstructorId = instructorId,
-                            CompanyName = exp.CompanyName,
-                            JobTitle = exp.JobTitle,
-                            EmployementType = exp.EmployementType,
-                            Location = exp.Location,
-                            StartDate = exp.StartDate,
-                            EndDate = exp.EndDate,
-                            IsCurrentlyWorking = exp.IsCurrentlyWorking,
-                            Description = exp.Description
-                        },
-                        transaction
-                    );
-                }
+                    var experienceDetailsSql = @"
+                        INSERT INTO [dbo].[InstructorExperience]
+                        (
+                        	[InstructorId],
+                        	[CompanyName],
+                        	[JobTitle],
+                        	[EmployementType],
+                        	[Location],
+                        	[StartDate],
+                        	[EndDate],
+                        	[IsCurrentlyWorking],
+                        	[Description]
+                        )
+                        VALUES
+                        (
+                        	@InstructorId,
+                        	@CompanyName,
+                        	@JobTitle,
+                        	@EmployementType,
+                        	@Location,
+                        	@StartDate,
+                        	@EndDate,
+                        	@IsCurrentlyWorking,
+                        	@Description
+                        )
+                    ";
 
+                    foreach (var exp in instructorDetails.InstructorExperiences)
+                    {
+                        await db.ExecuteAsync(
+                            experienceDetailsSql,
+                            new
+                            {
+                                InstructorId = instructorId,
+                                CompanyName = exp.CompanyName,
+                                JobTitle = exp.JobTitle,
+                                EmployementType = exp.EmployementType,
+                                Location = exp.Location,
+                                StartDate = exp.StartDate,
+                                EndDate = exp.EndDate,
+                                IsCurrentlyWorking = exp.IsCurrentlyWorking,
+                                Description = exp.Description
+                            },
+                            transaction
+                        );
+                    }
+                }
                 transaction.Commit();
                 return userId;
             }

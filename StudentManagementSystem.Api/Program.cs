@@ -4,6 +4,7 @@ using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
 using StudentManagementSystem.Application.Services;
 using StudentManagementSystem.Domain.Persistence;
+using StudentManagementSystem.Infrastructure.Persistence.Sql.Helpers;
 using StudentManagementSystem.Infrastructure.Repositories;
 using StudentManagementSystem.Infrastructure.Security;
 using System.Text;
@@ -42,6 +43,9 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();
+
+builder.Services.AddSingleton<ISqlQueryLoader, SqlQueryLoader>();
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();
