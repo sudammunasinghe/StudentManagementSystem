@@ -7,26 +7,29 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Persistence\Sql\Account\InsertEducation.sql" />
-    <None Remove="Persistence\Sql\Account\InsertInstructorExperience.sql" />
-    <None Remove="Persistence\Sql\Account\SelectExistingInstructorExperienceIds.sql" />
     <None Remove="Persistence\Sql\Account\Select_EducationalDetails.sql" />
     <None Remove="Persistence\Sql\Account\Select_ExistingEducationIds.sql" />
-    <None Remove="Persistence\Sql\Account\UpdateEducation.sql" />
-    <None Remove="Persistence\Sql\Account\UpdateEducationDetails.sql" />
-    <None Remove="Persistence\Sql\Account\UpdateInstructorExperience.sql" />
-    <None Remove="Persistence\Sql\Account\UpdateInstructorExperienceDetails.sql" />
-    <None Remove="Persistence\Sql\Account\UpdateUser.sql" />
+    <None Remove="Persistence\Sql\User\Insert_NewEducation.sql" />
+    <None Remove="Persistence\Sql\User\Insert_NewInstructor.sql" />
+    <None Remove="Persistence\Sql\User\Insert_NewInstructorExperience.sql" />
+    <None Remove="Persistence\Sql\User\Insert_NewStudent.sql" />
+    <None Remove="Persistence\Sql\User\Insert_NewUser.sql" />
+    <None Remove="Persistence\Sql\User\Select_UserDetailsByEmail.sql" />
+    <None Remove="Persistence\Sql\User\Select_UserDetailsByToken.sql" />
+    <None Remove="Persistence\Sql\User\Select_UserDetailsByUserId.sql" />
+    <None Remove="Persistence\Sql\User\Update_UserForPassword.sql" />
+    <None Remove="Persistence\Sql\User\Update_UserForPasswordResetToken.sql" />
+    <None Remove="Persistence\Sql\User\Update_UserForRegistrationNumber.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Persistence\Sql\Account\InsertEducation.sql">
+    <Content Include="Persistence\Sql\Account\Insert_Education.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Persistence\Sql\Account\InsertInstructorExperience.sql">
+    <Content Include="Persistence\Sql\Account\Insert_InstructorExperience.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Persistence\Sql\Account\SelectExistingInstructorExperienceIds.sql">
+    <Content Include="Persistence\Sql\Account\Select_ExistingInstructorExperienceIds.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Persistence\Sql\Account\Select_ExistingEducationIds.sql">
@@ -38,19 +41,52 @@
     <Content Include="Persistence\Sql\Account\Select_EducationalDetails.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Persistence\Sql\Account\UpdateEducation.sql">
+    <Content Include="Persistence\Sql\Account\Update_Education.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Persistence\Sql\Account\UpdateEducationDetails.sql">
+    <Content Include="Persistence\Sql\Account\Update_EducationDetails.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Persistence\Sql\Account\UpdateInstructorExperience.sql">
+    <Content Include="Persistence\Sql\Account\Update_InstructorExperience.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Persistence\Sql\Account\UpdateInstructorExperienceDetails.sql">
+    <Content Include="Persistence\Sql\Account\Update_InstructorExperienceDetails.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Persistence\Sql\Account\UpdateUser.sql">
+    <Content Include="Persistence\Sql\Account\Update_User.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\User\Insert_NewEducation.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\User\Insert_NewInstructor.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\User\Insert_NewInstructorExperience.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\User\Insert_NewStudent.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\User\Insert_NewUser.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\User\Select_UserDetailsByEmail.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\User\Select_UserDetailsByToken.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\User\Select_UserDetailsByUserId.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\User\Update_UserForPassword.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\User\Update_UserForPasswordResetToken.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\User\Update_UserForRegistrationNumber.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

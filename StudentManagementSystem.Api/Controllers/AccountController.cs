@@ -17,6 +17,10 @@ namespace StudentManagementSystem.Api.Controllers
             _accountService = accountService;
         }
 
+        /// <summary>
+        /// Retrieves the profile details of a specific user.
+        /// </summary>
+        /// <returns><see cref="ApiResponse{ProfileDetailsDto}"/>Containing the user's profile details</returns>
         [HttpGet("profile")]
         public async Task<ActionResult<ApiResponse<ProfileDetailsDto>>> GetProfileDetailsAsync()
         {
@@ -29,6 +33,11 @@ namespace StudentManagementSystem.Api.Controllers
             });
         }
 
+        /// <summary>
+        /// Updates the profile details of a user.
+        /// </summary>
+        /// <param name="dto">An object containing updated profile details.</param>
+        /// <returns><see cref="ApiResponse{string}"/></returns>
         [HttpPut("profile")]
         public async Task<ActionResult<ApiResponse<string>>> UpdateProfileDetailsAsync([FromBody] UpdateProfileDetailsDto dto)
         {

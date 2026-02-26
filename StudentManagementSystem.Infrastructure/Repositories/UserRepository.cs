@@ -2,61 +2,53 @@
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Domain.Entities;
 using StudentManagementSystem.Domain.Persistence;
+using StudentManagementSystem.Infrastructure.Persistence.Sql.Helpers;
 
 namespace StudentManagementSystem.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
         private readonly IDbConnectionFactory _connectionFactory;
-        public UserRepository(IDbConnectionFactory connectionFactory)
+        private readonly ISqlQueryLoader _sqlQueryLoader;
+
+        private readonly string _Select_UserDetailsByEmail;
+        private readonly string _Select_UserDetailsByUserId;
+        private readonly string _Insert_NewUser;
+        private readonly string _Insert_NewStudent;
+        private readonly string _Update_UserForRegistrationNumber;
+        private readonly string _Insert_NewEducation;
+        private readonly string _Insert_NewInstructor;
+        private readonly string _Insert_NewInstructorExperience;
+        private readonly string _Update_UserForPasswordResetToken;
+        private readonly string _Select_UserDetailsByToken;
+        private readonly string _Update_UserForPassword;
+        public UserRepository(IDbConnectionFactory connectionFactory, ISqlQueryLoader sqlQueryLoader)
         {
             _connectionFactory = connectionFactory;
+            _sqlQueryLoader = sqlQueryLoader;
+            _Select_UserDetailsByEmail = _sqlQueryLoader.Load("User", "Select_UserDetailsByEmail.sql");
+            _Select_UserDetailsByUserId = _sqlQueryLoader.Load("User", "Select_UserDetailsByUserId.sql");
+            _Insert_NewUser = _sqlQueryLoader.Load("User", "Insert_NewUser.sql");
+            _Insert_NewStudent = _sqlQueryLoader.Load("User", "Insert_NewStudent.sql");
+            _Update_UserForRegistrationNumber = _sqlQueryLoader.Load("User", "Update_UserForRegistrationNumber.sql");
+            _Insert_NewEducation = _sqlQueryLoader.Load("User", "Insert_NewEducation.sql");
+            _Insert_NewInstructor = _sqlQueryLoader.Load("User", "Insert_NewInstructor.sql");
+            _Insert_NewInstructorExperience = _sqlQueryLoader.Load("User", "Insert_NewInstructorExperience.sql");
+            _Update_UserForPasswordResetToken = _sqlQueryLoader.Load("User", "Update_UserForPasswordResetToken.sql");
+            _Select_UserDetailsByToken = _sqlQueryLoader.Load("User", "Select_UserDetailsByToken.sql");
+            _Update_UserForPassword = _sqlQueryLoader.Load("User", "Update_UserForPassword.sql");
         }
 
         public async Task<User?> GetUserByEmailAsync(string email)
         {
-            var sql = @"
-                    SELECT
-                        [Id],
-                        [RegistrationNumber],
-                        [FirstName], 
-	                    [LastName], 
-                        [ContactNumber],
-	                    [Address], 
-	                    [NIC], 
-	                    [DateOfBirth],
-	                    [Gender],
-	                    [Email],
-	                    [PasswordHash],
-                        [RoleId]
-                    FROM [dbo].[User]
-                    WHERE [IsActive] = 1 AND [Email] = @Email;
-            ";
             using var db = _connectionFactory.CreateConnection();
-            return await db.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
+            return await db.QueryFirstOrDefaultAsync<User>(_Select_UserDetailsByEmail, new { Email = email });
         }
 
         public async Task<User?> GetUserByIdAsync(int userId)
         {
-            var sql = @"
-                 SELECT
-                        [Id],
-                        [RegistrationNumber],
-                        [FirstName], 
-	                    [LastName], 
-                        [ContactNumber],
-	                    [Address], 
-	                    [NIC], 
-	                    [DateOfBirth],
-	                    [Gender],
-	                    [Email],
-	                    [PasswordHash],
-                        [RoleId]
-                    FROM [dbo].[User]
-                    WHERE [IsActive] = 1 AND [Id] = @UserId;
-            ";
             using var db = _connectionFactory.CreateConnection();
-            return await db.QueryFirstOrDefaultAsync<User?>(sql, new { UserId = userId });
+            return await db.QueryFirstOrDefaultAsync<User?>(_Select_UserDetailsByUserId, new { UserId = userId });
         }
 
         public async Task<int> CreateNewStudentUserAsync(User newUser, Student studentDetails)
@@ -67,37 +59,8 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             using var transaction = db.BeginTransaction();
             try
             {
-                var userSql = @"
-                    INSERT  INTO [dbo].[User]
-                    (
-	                    [FirstName], 
-	                    [LastName], 
-                        [ContactNumber],
-	                    [Address], 
-	                    [NIC], 
-	                    [DateOfBirth],
-	                    [Gender],
-                    	[Email],
-                    	[PasswordHash],
-                        [RoleId]
-                    )
-                    VALUES(
-                        @FirstName,
-                        @LastName,
-                        @ContactNumber,
-                        @Address,
-                        @NIC,
-                        @DateOfBirth,
-                        @Gender,
-                    	@Email,
-                        @PasswordHash,
-                        @RoleId
-                    );
-                    SELECT CAST(SCOPE_IDENTITY() AS INT);
-                ";
-
                 var userId = await db.ExecuteScalarAsync<int>(
-                    userSql,
+                    _Insert_NewUser,
                     new
                     {
                         FirstName = newUser.FirstName,
@@ -114,66 +77,22 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                     transaction
                 );
 
-                var studentSql = @"
-                    INSERT INTO [dbo].[Student](
-                        [UserId],
-                        [GPA]
-                    ) 
-                    VALUES
-                    (
-                        @UserId,
-                        @GPA
-                    ); 
-                    SELECT CAST(SCOPE_IDENTITY() AS INT);
-                ";
-
                 var studentId = await db.ExecuteScalarAsync<int>(
-                    studentSql,
+                    _Insert_NewStudent,
                     new { UserId = userId, GPA = studentDetails.GPA },
                     transaction
                 );
 
                 //Generate registration number and update the user table
                 var registrationNumber = $"STD/{DateTime.UtcNow.Year}/{studentId:D4}";
-                var updateRegistrationNumberSql = @"
-                    UPDATE [dbo].[User]
-                    SET
-                        [RegistrationNumber] = @RegistrationNumber,
-                        [LastModifiedDateTime] = GETDATE()
-                    WHERE [Id] = @UserId;
-                ";
-                await db.ExecuteAsync(updateRegistrationNumberSql, new { UserId = userId, RegistrationNumber = registrationNumber }, transaction);
+                await db.ExecuteAsync(_Update_UserForRegistrationNumber, new { UserId = userId, RegistrationNumber = registrationNumber }, transaction);
 
                 if (studentDetails.EducationDetails != null && studentDetails.EducationDetails.Any())
                 {
-                    var educationSql = @"
-                        INSERT INTO [dbo].[Education]
-                        (
-                        	[StudentId],
-                        	[Institute],
-                        	[Degree],
-                        	[Major],
-                        	[StartingDate],
-                        	[EndingDate],
-                        	[IsStudying],
-                        	[Description]
-                        )
-                        VALUES(
-                        	@StudentId,
-                        	@Institute,
-                        	@Degree,
-                        	@Major,
-                        	@StartingDate,
-                        	@EndingDate,
-                        	@IsStudying,
-                        	@Description
-                        )
-                    ";
-
                     foreach (var edu in studentDetails.EducationDetails)
                     {
                         await db.ExecuteAsync(
-                            educationSql,
+                            _Insert_NewEducation,
                             new
                             {
                                 StudentId = studentId,
@@ -207,37 +126,8 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             using var transaction = db.BeginTransaction();
             try
             {
-                var userSql = @"
-                    INSERT INTO [dbo].[User]
-                    (
-                    	[FirstName], 
-	                    [LastName], 
-                        [ContactNumber],
-	                    [Address], 
-	                    [NIC], 
-	                    [DateOfBirth],
-	                    [Gender],
-                    	[Email],
-                    	[PasswordHash],
-                        [RoleId]
-                    )
-                    VALUES
-                    (
-                    	@FirstName,
-                        @LastName,
-                        @ContactNumber,
-                        @Address,
-                        @NIC,
-                        @DateOfBirth,
-                        @Gender,
-                    	@Email,
-                        @PasswordHash,
-                        @RoleId
-                    );
-                    SELECT CAST(SCOPE_IDENTITY() AS INT);
-                ";
                 var userId = await db.ExecuteScalarAsync<int>(
-                    userSql,
+                    _Insert_NewUser,
                     new
                     {
                         FirstName = newUser.FirstName,
@@ -254,72 +144,22 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                     transaction
                 );
 
-                var instructorSql = @"
-                    INSERT INTO [dbo].[Instructor](
-                        [UserId],
-                        [ExperienceYears],
-                        [PreferredSalary]
-
-                    ) 
-                    VALUES 
-                    (
-                        @UserId,
-                        @ExperienceYears,
-                        @PreferredSalary
-                    );
-                    SELECT CAST(SCOPE_IDENTITY() AS INT);
-                ";
-
                 var instructorId = await db.ExecuteScalarAsync<int>(
-                    instructorSql,
+                    _Insert_NewInstructor,
                     new { UserId = userId, ExperienceYears = instructorDetails.ExperienceYears, PreferredSalary = instructorDetails.PreferredSalary },
                     transaction
                 );
 
                 //Generate registration number and update the user table
                 var registrationNumber = $"INS/{DateTime.UtcNow.Year}/{instructorId:D4}";
-                var updateRegistrationNumberSql = @"
-                    UPDATE [dbo].[User]
-                        SET
-                            [RegistrationNumber] = @RegistrationNumber,
-                            [LastModifiedDateTime] = GETDATE()
-                        WHERE [Id] = @UserId;
-                ";
-                await db.ExecuteAsync(updateRegistrationNumberSql, new { UserId  = userId, RegistrationNumber = registrationNumber }, transaction );
+                await db.ExecuteAsync(_Update_UserForRegistrationNumber, new { UserId  = userId, RegistrationNumber = registrationNumber }, transaction );
 
                 if (instructorDetails.InstructorExperiences != null && instructorDetails.InstructorExperiences.Any())
                 {
-                    var experienceDetailsSql = @"
-                        INSERT INTO [dbo].[InstructorExperience]
-                        (
-                        	[InstructorId],
-                        	[CompanyName],
-                        	[JobTitle],
-                        	[EmployementType],
-                        	[Location],
-                        	[StartDate],
-                        	[EndDate],
-                        	[IsCurrentlyWorking],
-                        	[Description]
-                        )
-                        VALUES
-                        (
-                        	@InstructorId,
-                        	@CompanyName,
-                        	@JobTitle,
-                        	@EmployementType,
-                        	@Location,
-                        	@StartDate,
-                        	@EndDate,
-                        	@IsCurrentlyWorking,
-                        	@Description
-                        )
-                    ";
-
                     foreach (var exp in instructorDetails.InstructorExperiences)
                     {
                         await db.ExecuteAsync(
-                            experienceDetailsSql,
+                            _Insert_NewInstructorExperience,
                             new
                             {
                                 InstructorId = instructorId,
@@ -348,56 +188,20 @@ namespace StudentManagementSystem.Infrastructure.Repositories
 
         public async Task SavePasswordResetTokenAsync(int userId, string token, DateTime expiry)
         {
-            var sql = @"
-                UPDATE [dbo].[User]
-                    SET
-                        [PasswrodResetToken] = @Token,
-                        [PasswrodResetTokenExpiry] = @Expiry,
-                        [LastModifiedDateTime] = GETDATE()
-                WHERE [Id] = @UserId;
-            ";
             using var db = _connectionFactory.CreateConnection();
-            await db.ExecuteAsync(sql, new { UserId = userId, Token = token, Expiry = expiry });
+            await db.ExecuteAsync(_Update_UserForPasswordResetToken, new { UserId = userId, Token = token, Expiry = expiry });
         }
 
         public async Task<User?> GetUserByResetTokenAsync(string token)
         {
-            var sql = @"
-                SELECT
-                    [Id],
-                    [FirstName], 
-	                [LastName], 
-                    [ContactNumber],
-	                [Address], 
-	                [NIC], 
-	                [DateOfBirth],
-	                [Gender],
-	                [Email],
-	                [PasswordHash],
-                    [RoleId],
-                    [PasswrodResetToken],
-                    [PasswrodResetTokenExpiry]
-                FROM [dbo].[User]
-                WHERE [IsActive] = 1 AND [PasswrodResetToken] = @Token;
-                    
-            ";
             using var db = _connectionFactory.CreateConnection();
-            return await db.QueryFirstOrDefaultAsync<User>(sql, new { Token = token });
+            return await db.QueryFirstOrDefaultAsync<User>(_Select_UserDetailsByToken, new { Token = token });
         }
 
         public async Task UpdatePasswordAsync(int userId, string newPasswordHash)
         {
-            var sql = @"
-                UPDATE [dbo].[User]
-                    SET
-                        [PasswordHash] = @NewPasswordHash,
-                        [PasswrodResetToken] = NULL,
-                        [PasswrodResetTokenExpiry] = NULL,
-                        [LastModifiedDateTime] = GETDATE()
-                WHERE [Id] = @UserId
-            ";
             using var db = _connectionFactory.CreateConnection();
-            await db.ExecuteAsync(sql, new { UserId = userId, NewPasswordHash = newPasswordHash });
+            await db.ExecuteAsync(_Update_UserForPassword, new { UserId = userId, NewPasswordHash = newPasswordHash });
         }
     }
 }

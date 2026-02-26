@@ -18,6 +18,11 @@ namespace StudentManagementSystem.Application.Services
             _userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Retrieves the profile details of a specific user.
+        /// </summary>
+        /// <returns><see cref="ProfileDetailsDto"/>Containing the profile details of a user.</returns>
+        /// <exception cref="UnauthorizedAccessException">Thrown when the current user is not authenticated.</exception>
         public async Task<ProfileDetailsDto> GetProfileDetailsAsync()
         {
             var loggedUserId = _currentUserService.UserId;
@@ -84,6 +89,11 @@ namespace StudentManagementSystem.Application.Services
             return profileDetails;
         }
 
+        /// <summary>
+        /// Updates the profile details of a user based on their role.
+        /// </summary>
+        /// <param name="dto">An object containing updated profile details</param>
+        /// <returns></returns>
         public async Task UpdateProfileDetailsAsync(UpdateProfileDetailsDto dto)
         {
             var loggedUserRole = _currentUserService.Role;

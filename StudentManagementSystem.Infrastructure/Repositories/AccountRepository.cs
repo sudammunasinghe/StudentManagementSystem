@@ -14,32 +14,41 @@ namespace StudentManagementSystem.Infrastructure.Repositories
 
         private readonly string _Select_EducationalDetails;
         private readonly string _Select_InstructorExperienceDetails;
-        private readonly string _UpdateUser;
+        private readonly string _Update_User;
         private readonly string _Select_ExistingEducationIds;
-        private readonly string _UpdateEducation;
-        private readonly string _UpdateEducationDetails;
-        private readonly string _InsertEducation;
-        private readonly string _SelectExistingInstructorExperienceIds;
-        private readonly string _UpdateInstructorExperience;
-        private readonly string _UpdateInstructorExperienceDetails;
-        private readonly string _InsertInstructorExperience;
+        private readonly string _Update_Education;
+        private readonly string _Update_EducationDetails;
+        private readonly string _Insert_Education;
+        private readonly string _Select_ExistingInstructorExperienceIds;
+        private readonly string _Update_InstructorExperience;
+        private readonly string _Update_InstructorExperienceDetails;
+        private readonly string _Insert_InstructorExperience;
         public AccountRepository(IDbConnectionFactory connectionFactory, ISqlQueryLoader sqlQueryLoader)
         {
             _connectionFactory = connectionFactory;
             _sqlQueryLoader = sqlQueryLoader;
             _Select_EducationalDetails = _sqlQueryLoader.Load("Account", "Select_EducationalDetails.sql");
-            _Select_InstructorExperienceDetails = sqlQueryLoader.Load("Account", "Select_InstructorExperienceDetails.sql");
-            _UpdateUser = _sqlQueryLoader.Load("Account", "UpdateUser.sql");
-            _Select_ExistingEducationIds = sqlQueryLoader.Load("Account", "Select_ExistingEducationIds.sql");
-            _UpdateEducation = sqlQueryLoader.Load("Account", "UpdateEducation.sql");
-            _UpdateEducationDetails = sqlQueryLoader.Load("Account", "UpdateEducationDetails.sql");
-            _InsertEducation = sqlQueryLoader.Load("Account", "InsertEducation.sql");
-            _SelectExistingInstructorExperienceIds = sqlQueryLoader.Load("Account", "SelectExistingInstructorExperienceIds.sql");
-            _UpdateInstructorExperience = sqlQueryLoader.Load("Account", "UpdateInstructorExperience.sql");
-            _UpdateInstructorExperienceDetails = sqlQueryLoader.Load("Account", "UpdateInstructorExperienceDetails.sql");
-            _InsertInstructorExperience = sqlQueryLoader.Load("Account", "InsertInstructorExperience.sql");
+            _Select_InstructorExperienceDetails = _sqlQueryLoader.Load("Account", "Select_InstructorExperienceDetails.sql");
+            _Update_User = _sqlQueryLoader.Load("Account", "Update_User.sql");
+            _Select_ExistingEducationIds = _sqlQueryLoader.Load("Account", "Select_ExistingEducationIds.sql");
+            _Update_Education = _sqlQueryLoader.Load("Account", "Update_Education.sql");
+            _Update_EducationDetails = _sqlQueryLoader.Load("Account", "Update_EducationDetails.sql");
+            _Insert_Education = _sqlQueryLoader.Load("Account", "Insert_Education.sql");
+            _Select_ExistingInstructorExperienceIds = _sqlQueryLoader.Load("Account", "Select_ExistingInstructorExperienceIds.sql");
+            _Update_InstructorExperience = _sqlQueryLoader.Load("Account", "Update_InstructorExperience.sql");
+            _Update_InstructorExperienceDetails = _sqlQueryLoader.Load("Account", "Update_InstructorExperienceDetails.sql");
+            _Insert_InstructorExperience = _sqlQueryLoader.Load("Account", "Insert_InstructorExperience.sql");
         }
 
+
+        /// <summary>
+        /// Retrieves all educational details associated with the specific user
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>
+        /// A list of <see cref="Education"/>records linked to the specific user.
+        /// Returns empty list, if no records are found.
+        /// </returns>
         public async Task<List<Education>> GetEducationalDetailsByUserIdAsync(int userId)
         {
             using var db = _connectionFactory.CreateConnection();
@@ -47,6 +56,14 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             return result.ToList();
         }
 
+        /// <summary>
+        /// Retrieves all experience details associated with the specific user.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>
+        /// A list of <see cref="InstructorExperience"/>records linked to the specific user.
+        /// Returns empty list, if no records are found.
+        /// </returns>
         public async Task<List<InstructorExperience>> GetInstructorExperienceDetailsByUserIdAsync(int userId)
         {
             using var db = _connectionFactory.CreateConnection();
@@ -54,6 +71,13 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             return result.ToList();
         }
 
+
+        /// <summary>
+        /// Updates the profile details of a user based on their role.
+        /// </summary>
+        /// <param name="profile">The profile entity containing updated profile details.</param>
+        /// <param name="role">The role of the user.</param>
+        /// <returns></returns>
         public async Task UpdateProfileDetailsAsync(ProfileEntity profile, string role)
         {
             using var db = _connectionFactory.CreateConnection();
@@ -62,13 +86,18 @@ namespace StudentManagementSystem.Infrastructure.Repositories
 
             try
             {
-                //Update User Data
-                await db.ExecuteAsync(_UpdateUser, profile, transaction );
+                //Updates User details
+                await db.ExecuteAsync(_Update_User, profile, transaction );
 
                 if(role == nameof(Roles.Student))
                 {
-                    var studentId = int.Parse(profile.RegistrationNumber.Substring(profile.RegistrationNumber.Length - 4));
-                    var existingIds = (await db.QueryAsync<int>(_Select_ExistingEducationIds, new { StudentId = studentId }, transaction )).ToList();
+                    //Extract student id from the registration number.
+                    var studentId = 
+                        int.Parse(profile.RegistrationNumber.Substring(profile.RegistrationNumber.Length - 4));
+
+                    var existingIds = 
+                        (await db.QueryAsync<int>(_Select_ExistingEducationIds, new { StudentId = studentId }, transaction )).ToList();
+
                     var incomingIds = profile?.EducationalDetails?
                         .Where(edu => edu.Id.HasValue)
                         .Select(edu => edu.Id.Value)
@@ -78,7 +107,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
 
                     //Inactivate Education records
                     if (IdsToInactivate.Any())
-                        await db.ExecuteAsync(_UpdateEducation, new { Ids = IdsToInactivate }, transaction );
+                        await db.ExecuteAsync(_Update_Education, new { Ids = IdsToInactivate }, transaction );
                     
                     //Insert or Update Educational Details
                     if (profile.EducationalDetails != null)
@@ -88,7 +117,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                             if (edu.Id.HasValue)
                             {
                                 await db.ExecuteAsync(
-                                    _UpdateEducationDetails,
+                                    _Update_EducationDetails,
                                     new
                                     {
                                         Id = edu.Id,
@@ -106,7 +135,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                             else
                             {
                                 await db.ExecuteAsync(
-                                    _InsertEducation,
+                                    _Insert_Education,
                                     new
                                     {
                                         StudentId = studentId,
@@ -127,19 +156,25 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                 }
                 else if(role == nameof(Roles.Instructor))
                 {
-                    var instructorId = int.Parse(profile.RegistrationNumber.Substring(profile.RegistrationNumber.Length - 4));
-                    var existingIds = (await db.QueryAsync<int>(_SelectExistingInstructorExperienceIds, new { InstructorId = instructorId }, transaction )).ToList();
+                    ////Extract instructor id from the registration number.
+                    var instructorId = 
+                        int.Parse(profile.RegistrationNumber.Substring(profile.RegistrationNumber.Length - 4));
+
+                    var existingIds = 
+                        (await db.QueryAsync<int>(_Select_ExistingInstructorExperienceIds, new { InstructorId = instructorId }, transaction )).ToList();
+
                     var incomingIds = profile.InstructorExperiences?
                         .Where(exp => exp.Id.HasValue)
                         .Select(exp => exp.Id.Value)
                         .ToList() ?? new List<int>();
+
                     var IdsToInactivate = existingIds.Except(incomingIds).ToList();
 
-                    //Inactivate Experience record
+                    //Inactivate instructor's experience records
                     if (IdsToInactivate.Any())
-                        await db.ExecuteAsync(_UpdateInstructorExperience, new { Ids = IdsToInactivate }, transaction);
+                        await db.ExecuteAsync(_Update_InstructorExperience, new { Ids = IdsToInactivate }, transaction);
 
-                    //Insert or Update experince records
+                    //Insert or Update instructor's experince records
                     if (profile.InstructorExperiences != null)
                     {
                         foreach (var exp in profile.InstructorExperiences)
@@ -147,7 +182,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                             if (exp.Id.HasValue)
                             {
                                 await db.ExecuteAsync(
-                                    _UpdateInstructorExperienceDetails,
+                                    _Update_InstructorExperienceDetails,
                                     new
                                     {
                                         Id = exp.Id,
@@ -166,7 +201,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                             else
                             {
                                 await db.ExecuteAsync(
-                                    _InsertInstructorExperience,
+                                    _Insert_InstructorExperience,
                                     new
                                     {
                                         InstructorId = instructorId,
