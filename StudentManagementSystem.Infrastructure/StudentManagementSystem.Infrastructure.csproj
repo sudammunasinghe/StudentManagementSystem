@@ -7,6 +7,55 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Persistence\Sql\Account\InsertEducation.sql" />
+    <None Remove="Persistence\Sql\Account\InsertInstructorExperience.sql" />
+    <None Remove="Persistence\Sql\Account\SelectExistingInstructorExperienceIds.sql" />
+    <None Remove="Persistence\Sql\Account\Select_EducationalDetails.sql" />
+    <None Remove="Persistence\Sql\Account\Select_ExistingEducationIds.sql" />
+    <None Remove="Persistence\Sql\Account\UpdateEducation.sql" />
+    <None Remove="Persistence\Sql\Account\UpdateEducationDetails.sql" />
+    <None Remove="Persistence\Sql\Account\UpdateInstructorExperience.sql" />
+    <None Remove="Persistence\Sql\Account\UpdateInstructorExperienceDetails.sql" />
+    <None Remove="Persistence\Sql\Account\UpdateUser.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Persistence\Sql\Account\InsertEducation.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Account\InsertInstructorExperience.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Account\SelectExistingInstructorExperienceIds.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Account\Select_ExistingEducationIds.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Account\Select_InstructorExperienceDetails.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Account\Select_EducationalDetails.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Account\UpdateEducation.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Account\UpdateEducationDetails.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Account\UpdateInstructorExperience.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Account\UpdateInstructorExperienceDetails.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Account\UpdateUser.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.0.0" />
     <PackageReference Include="Dapper" Version="2.1.66" />
   </ItemGroup>

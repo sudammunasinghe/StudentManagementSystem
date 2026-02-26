@@ -4,8 +4,6 @@ using StudentManagementSystem.Application.DTOs.CourseContent;
 using StudentManagementSystem.Application.DTOs.Student;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
-using StudentManagementSystem.Domain.Entities;
-using System.Reflection;
 
 namespace StudentManagementSystem.Application.Services
 {
@@ -28,16 +26,12 @@ namespace StudentManagementSystem.Application.Services
             var enrolledCourses =
                 await _studentRepository.GetEnrolledCoursesByStudentIdAsync(stdId);
 
-            var enrolledCourseContents = 
+            var enrolledCourseContents =
                 await _studentRepository.GetCourseContentsByStudentIdAsync(stdId);
 
             return new StudentResponseDto
             {
                 StudentId = student.Id,
-                FullName = $"{student.FirstName} {student.LastName}",
-                Address = student.Address,
-                Email = student.Email,
-                NIC = student.NIC,
                 EnrolledCourses = enrolledCourses.Select(ec => new CourseDto
                 {
                     CourseId = ec.Id,
@@ -65,23 +59,20 @@ namespace StudentManagementSystem.Application.Services
 
             return students.Select(s => new StudentResponseDto
             {
-                StudentId = s.Id,
-                FullName = $"{s.FirstName} {s.LastName}",
-                Address = s.Address,
-                Email = s.Email,
-                NIC = s.NIC
+                StudentId = s.Id
             }).ToList();
         }
 
         public async Task<int> CreateStudentAsync(CreateStudentDto dto)
         {
-            var newStudent = Student.Create(
-                dto.FirstName,
-                dto.LastName,
-                dto.Address,
-                dto.Email,
-                dto.NIC);
-            return await _studentRepository.CreateStudentAsync(newStudent);
+            //var newStudent = Student.Create(
+            //    dto.FirstName,
+            //    dto.LastName,
+            //    dto.Address,
+            //    dto.NIC);
+
+            //return await _studentRepository.CreateStudentAsync(newStudent);
+            return 1;
         }
 
         public async Task<StudentResponseDto> UpdateStudentDetailsAsync(UpdateStudentDto dto)
@@ -93,11 +84,8 @@ namespace StudentManagementSystem.Application.Services
                 throw new NotFoundException("Student not found ...");
 
             student.Update(
-                dto.FirstName,
-                dto.LastName,
-                dto.Address,
-                dto.Email,
-                dto.NIC);
+                3.00
+                );
 
             var affectedRows =
                 await _studentRepository.UpdateStudentDetailsAsync(student);

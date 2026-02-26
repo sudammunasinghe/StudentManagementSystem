@@ -18,4 +18,11 @@
         NotFound,
         InvalidTransition
     }
+
+    public enum Roles
+    {
+        Admin = 1,
+        Student = 2,
+        Instructor = 3
+    }
 }

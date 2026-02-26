@@ -1,0 +1,21 @@
+﻿INSERT INTO [dbo].[Education]
+(
+	[StudentId],
+	[Institute],
+	[Degree],
+	[Major],
+	[StartingDate],
+	[EndingDate],
+	[IsStudying],
+	[Description]
+)
+VALUES(
+	@StudentId,
+	@Institute,
+	@Degree,
+	@Major,
+	@StartingDate,
+	@EndingDate,
+	@IsStudying,
+	@Description
+)

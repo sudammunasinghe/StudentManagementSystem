@@ -3,7 +3,7 @@
     public class BaseEntity
     {
         public bool IsActive { get; set; }
-        public int CreatedDateTime { get; set; }
-        public int LastModifiedDateTime { get; set; }
+        public DateTime CreatedDateTime { get; set; }
+        public DateTime LastModifiedDateTime { get; set; }
     }
 }

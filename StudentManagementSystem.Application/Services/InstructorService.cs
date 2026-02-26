@@ -4,7 +4,6 @@ using StudentManagementSystem.Application.DTOs.CourseContent;
 using StudentManagementSystem.Application.DTOs.Instructor;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
-using StudentManagementSystem.Domain.Entities;
 
 namespace StudentManagementSystem.Application.Services
 {
@@ -24,19 +23,15 @@ namespace StudentManagementSystem.Application.Services
             if (instructor == null)
                 throw new NotFoundException("Instructor not found ...");
 
-            var ownCourses = 
+            var ownCourses =
                 await _instructorRepository.GetOwnCoursesByInstructorIdAsync(instructorId);
 
-            var ownCourseContents = 
+            var ownCourseContents =
                 await _instructorRepository.GetCourseContentByInstructorIdAsync(instructorId);
 
             return new InstructorResponseDto
             {
                 InstructorId = instructor.Id,
-                FullName = $"{instructor.FirstName} {instructor.LastName}",
-                Email = instructor.Email,
-                Address = instructor.Address,
-                NIC = instructor.NIC,
                 OwnCourses = ownCourses.Select(oc => new CourseDto
                 {
                     CourseId = oc.Id,
@@ -65,23 +60,19 @@ namespace StudentManagementSystem.Application.Services
             return instructors.Select(i => new InstructorResponseDto
             {
                 InstructorId = i.Id,
-                FullName = $"{i.FirstName} {i.LastName}",
-                Email = i.Email,
-                Address = i.Address,
-                NIC = i.NIC
             }).ToList();
         }
 
         public async Task<int> CreateInstructorAsync(CreateInstructorDto dto)
         {
-            var newInstructor = Instructor.Create(
-                dto.FirstName,
-                dto.LastName,
-                dto.Email,
-                dto.NIC,
-                dto.Address);
+            //var newInstructor = Instructor.Create(
+            //    dto.FirstName,
+            //    dto.LastName,
+            //    dto.NIC,
+            //    dto.Address);
 
-            return await _instructorRepository.CreateInstructorAsync(newInstructor);
+            //return await _instructorRepository.CreateInstructorAsync(newInstructor);
+            return 1;
         }
 
         public async Task<InstructorResponseDto> UpdateInstructorDetailsAsync(UpdateInstructorDto dto)
@@ -93,11 +84,8 @@ namespace StudentManagementSystem.Application.Services
                 throw new NotFoundException("Instructor not found ...");
 
             instructor.Update(
-                dto.FirstName,
-                dto.LastName,
-                dto.Email,
-                dto.NIC,
-                dto.Address);
+                1, 2
+               );
 
             var affectedRows =
                 await _instructorRepository.UpdateInstructorDetailsAsync(instructor);
@@ -107,11 +95,7 @@ namespace StudentManagementSystem.Application.Services
 
             return new InstructorResponseDto
             {
-                InstructorId = instructor.Id,
-                FullName = $"{instructor.FirstName} {instructor.LastName}",
-                Email = instructor.Email,
-                Address = instructor.Address,
-                NIC = instructor.NIC
+                InstructorId = instructor.Id
             };
         }
 
