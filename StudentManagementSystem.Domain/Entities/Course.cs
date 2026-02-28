@@ -5,10 +5,13 @@ namespace StudentManagementSystem.Domain.Entities
     public class Course : BaseEntity
     {
         public int Id { get; set; }
-        public string? Title { get; set; }
-        public int? Credits { get; set; }
-        public string? Status { get; set; }
         public int? InstructorId { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public int? CategoryEnum { get; set; }
+        public int? Credits { get; set; }
+        public int? DurationHours { get; set; }
+        public int? EntrollmentLimit { get; set; }
 
         private Course() { }
 
@@ -18,13 +21,7 @@ namespace StudentManagementSystem.Domain.Entities
                 throw new DomainException("Title is required ...");
         }
 
-        public static void validateInstructorId(int? instructorId)
-        {
-            if (string.IsNullOrWhiteSpace(instructorId.ToString()))
-                throw new DomainException("Instructor Id is required ...");
-        }
-
-        public static void validateCredits(int? credits)
+        public static void ValidateCredits(int? credits)
         {
             if (string.IsNullOrWhiteSpace(credits.ToString()))
                 throw new DomainException("Credit is required ...");
@@ -33,37 +30,43 @@ namespace StudentManagementSystem.Domain.Entities
                 throw new DomainException("Invalid Credit range ...");
         }
 
-        public static Course Create(string? title, int? credits, int? instructorId)
+        public static void ValidateEnrollmentLimit(int? limit)
+        {
+            if (string.IsNullOrWhiteSpace(limit.ToString()))
+                throw new DomainException("Enrollment limit is required ...");
+        }
+
+        public static Course Create(string? title, int? credits, int? enrollmentLimit)
         {
             ValidateTitle(title);
-            validateInstructorId(instructorId);
-            validateCredits(credits);
+            ValidateCredits(credits);
+            ValidateEnrollmentLimit(enrollmentLimit);
 
             return new Course
             {
                 Title = title,
                 Credits = credits,
-                InstructorId = instructorId
+                EntrollmentLimit = enrollmentLimit
             };
         }
 
 
-        public void Update(string? title, int? credits, int? instructorId)
+        public void Update(string? title, int? credits, int? enrollmentLimit)
         {
             if (!string.IsNullOrWhiteSpace(title))
             {
                 ValidateTitle(title);
                 Title = title;
             }
-            if (!string.IsNullOrWhiteSpace(instructorId.ToString()))
-            {
-                validateInstructorId(instructorId);
-                InstructorId = instructorId;
-            }
             if (!string.IsNullOrWhiteSpace(credits.ToString()))
             {
-                validateCredits(credits);
+                ValidateCredits(credits);
                 Credits = credits;
+            }
+            if (!string.IsNullOrWhiteSpace(EntrollmentLimit.ToString()))
+            {
+                ValidateEnrollmentLimit(enrollmentLimit);
+                EntrollmentLimit = enrollmentLimit;
             }
         }
 

@@ -4,7 +4,7 @@
     {
         public int ExperienceYears { get; set; }
         public decimal? PreferredSalary { get; set; }
-        public bool? IsApproved { get; set; }
+        public int? Status { get; set; }
         public List<InstructorExperience>? InstructorExperiences { get; set; }
 
         private Instructor() { }

@@ -37,7 +37,6 @@ namespace StudentManagementSystem.Application.Services
                     CourseId = ec.Id,
                     Title = ec.Title,
                     Credits = ec.Credits,
-                    EnrollmentStatus = ec.Status,
                     CourseContents = enrolledCourseContents
                         .Where(cc => cc.CourseId == ec.Id)
                         .Select(cc => new CourseContentDto

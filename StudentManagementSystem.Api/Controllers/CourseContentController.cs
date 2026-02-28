@@ -25,7 +25,6 @@ namespace StudentManagementSystem.Api.Controllers
             var dto = new UploadCourseContentDto
             {
                 CourseId = request.CourseId,
-                InstructorId = request.InstructorId,
                 Title = request.Title,
                 Description = request.Description,
                 FileStream = stream,

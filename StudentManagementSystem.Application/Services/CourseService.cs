@@ -9,8 +9,8 @@ namespace StudentManagementSystem.Application.Services
     public class CourseService : ICourseService
     {
         private readonly ICourseRepository _courseRepository;
-        private readonly IInstructorRepository _instructorRepository;
-        public CourseService(ICourseRepository courseRepository, IInstructorRepository instructorRepository)
+        private readonly IInstructorRepositoryTemp _instructorRepository;
+        public CourseService(ICourseRepository courseRepository, IInstructorRepositoryTemp instructorRepository)
         {
             _courseRepository = courseRepository;
             _instructorRepository = instructorRepository;
@@ -31,8 +31,7 @@ namespace StudentManagementSystem.Application.Services
             {
                 CourseId = course.Id,
                 Title = course.Title,
-                Credits = course.Credits,
-                NoOfEnrolledStudents = studentCount
+                Credits = course.Credits
             };
         }
 
@@ -44,7 +43,7 @@ namespace StudentManagementSystem.Application.Services
         public async Task<int> CreateNewCourseAsync(CreateCourseDto dto)
         {
             var instructor =
-                await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(dto.InstructorId);
+                await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(0);
 
             if (instructor == null)
                 throw new NotFoundException("Instructor not found ...");
@@ -52,7 +51,7 @@ namespace StudentManagementSystem.Application.Services
             var newCourse = Course.Create(
                 dto.Title,
                 dto.Credits,
-                dto.InstructorId
+                0
              );
             return await _courseRepository.CreateNewCourseAsync(newCourse);
         }
@@ -66,7 +65,7 @@ namespace StudentManagementSystem.Application.Services
                 throw new NotFoundException("Course not found ...");
 
             var instructor =
-                await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(dto.InstructorId);
+                await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(0);
 
             if (instructor == null)
                 throw new NotFoundException("Instructor not found ...");
@@ -74,7 +73,7 @@ namespace StudentManagementSystem.Application.Services
             course.Update(
                 dto.Title,
                 dto.Credits,
-                dto.InstructorId
+                0
             );
 
             var affectedRows =

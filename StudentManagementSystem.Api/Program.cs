@@ -20,8 +20,8 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
-builder.Services.AddScoped<IInstructorService, InstructorService>();
-builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+builder.Services.AddScoped<IInstructorServiceTemp, InstructorServiceTemp>();
+builder.Services.AddScoped<IInstructorRepositoryTemp, InstructorRepositoryTemp>();
 
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
@@ -40,6 +40,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
+builder.Services.AddScoped<IInstructorService, InstructorService>();
+builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();

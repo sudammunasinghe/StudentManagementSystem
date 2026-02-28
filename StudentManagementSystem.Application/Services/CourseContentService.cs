@@ -20,7 +20,6 @@ namespace StudentManagementSystem.Application.Services
         {
             var content = CourseContent.Create(
                     dto.CourseId,
-                    dto.InstructorId,
                     dto.Title,
                     dto.FileName
                 );

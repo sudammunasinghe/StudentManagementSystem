@@ -9,6 +9,11 @@
   <ItemGroup>
     <None Remove="Persistence\Sql\Account\Select_EducationalDetails.sql" />
     <None Remove="Persistence\Sql\Account\Select_ExistingEducationIds.sql" />
+    <None Remove="Persistence\Sql\Instructor\Insert_CourseContent.sql" />
+    <None Remove="Persistence\Sql\Instructor\Insert_NewCourse.sql" />
+    <None Remove="Persistence\Sql\Instructor\Select_CourseDetailsAndContents.sql" />
+    <None Remove="Persistence\Sql\Instructor\Select_CourseDetailsByCourseId.sql" />
+    <None Remove="Persistence\Sql\Instructor\Select_InstructorDetailsByUserId.sql" />
     <None Remove="Persistence\Sql\User\Insert_NewEducation.sql" />
     <None Remove="Persistence\Sql\User\Insert_NewInstructor.sql" />
     <None Remove="Persistence\Sql\User\Insert_NewInstructorExperience.sql" />
@@ -54,6 +59,21 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Persistence\Sql\Account\Update_User.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Instructor\Insert_CourseContent.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Instructor\Insert_NewCourse.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Instructor\Select_CourseDetailsAndContents.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Instructor\Select_CourseDetailsByCourseId.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Instructor\Select_InstructorDetailsByUserId.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Persistence\Sql\User\Insert_NewEducation.sql">

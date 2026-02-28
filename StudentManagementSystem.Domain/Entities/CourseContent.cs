@@ -21,12 +21,6 @@ namespace StudentManagementSystem.Domain.Entities
                 throw new DomainException("Course Id is required ...");
         }
 
-        public static void ValidateInstructorId(int? instructorId)
-        {
-            if (string.IsNullOrWhiteSpace(instructorId.ToString()))
-                throw new DomainException("Instructor Id is required ...");
-        }
-
         public static void ValidateTitle(string? title)
         {
             if (string.IsNullOrWhiteSpace(title))
@@ -41,18 +35,16 @@ namespace StudentManagementSystem.Domain.Entities
 
         }
 
-        public static CourseContent Create(int? courseId, int? instructorId, string? title, string? fileName)
+        public static CourseContent Create(int? courseId, string? title, string? fileName)
         {
             var contentType = Path.GetExtension(fileName);
             ValidateCourseId(courseId);
-            ValidateInstructorId(instructorId);
             ValidateTitle(title);
             ValidateContentType(contentType);
 
             return new CourseContent
             {
                 CourseId = courseId,
-                InstructorId = instructorId,
                 Title = title,
                 ContentType = contentType
             };

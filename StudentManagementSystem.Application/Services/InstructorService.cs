@@ -1,117 +1,142 @@
-﻿using SendGrid.Helpers.Errors.Model;
-using StudentManagementSystem.Application.DTOs.Course;
+﻿using StudentManagementSystem.Application.DTOs.Course;
 using StudentManagementSystem.Application.DTOs.CourseContent;
-using StudentManagementSystem.Application.DTOs.Instructor;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
+using StudentManagementSystem.Domain;
+using StudentManagementSystem.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace StudentManagementSystem.Application.Services
 {
     public class InstructorService : IInstructorService
     {
         private readonly IInstructorRepository _instructorRepository;
-        public InstructorService(IInstructorRepository instructorRepository)
+        private readonly ICurrentUserService _currentUserService;
+        public InstructorService(IInstructorRepository instructorRepository, ICurrentUserService currentUserService)
         {
             _instructorRepository = instructorRepository;
+            _currentUserService = currentUserService;
         }
 
-        public async Task<InstructorResponseDto> GetInstructorDetailsByInstructorIdAsync(int instructorId)
+        public async Task<IEnumerable<CourseDto>> GetCoursesByInstructorAsync()
         {
-            var instructor =
-                await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(instructorId);
+            var loggedUserId = _currentUserService.UserId;
+            if (loggedUserId == null)
+                throw new UnauthorizedAccessException("Unauthorized user ...");
+
+            var instructor = 
+                await _instructorRepository.GetInstructorDetailsByUserIdAsync(loggedUserId);
 
             if (instructor == null)
-                throw new NotFoundException("Instructor not found ...");
+                throw new UnauthorizedAccessException("User is not a valid instructor ...");
 
-            var ownCourses =
-                await _instructorRepository.GetOwnCoursesByInstructorIdAsync(instructorId);
+            var courseDetails = 
+                await _instructorRepository.GetCoursesByInstructorAsync(instructor.Id);
 
-            var ownCourseContents =
-                await _instructorRepository.GetCourseContentByInstructorIdAsync(instructorId);
-
-            return new InstructorResponseDto
-            {
-                InstructorId = instructor.Id,
-                OwnCourses = ownCourses.Select(oc => new CourseDto
+            return courseDetails.courses.
+                Select(c => new CourseDto
                 {
-                    CourseId = oc.Id,
-                    Title = oc.Title,
-                    Credits = oc.Credits,
-                    CourseContents = ownCourseContents
-                        .Where(occ => occ.CourseId == oc.Id)
-                        .Select(occ => new CourseContentDto
+                    CourseId = c.Id,
+                    Credits = c.Credits,
+                    Title = c.Title,
+                    Description = c.Description,
+                    CategoryEnum = c.CategoryEnum,
+                    DurationHours = c.DurationHours,
+                    EntrollmentLimit = c.EntrollmentLimit,
+                    CourseContents = courseDetails.contents
+                        .Where(cn => cn.CourseId == c.Id)
+                        .Select(cn => new CourseContentDto
                         {
-                            ContentId = occ.Id,
-                            Title = occ.Title,
-                            Description = occ.Description,
-                            ContentType = occ.ContentType,
-                            FileSize = occ.FileSize
-                        }).ToList()
-
-                }).ToList()
-            };
+                            ContentId = cn.Id,
+                            Title = cn.Title,
+                            Description = cn.Description,
+                            ContentType = cn.ContentType,
+                            FileSize = cn.FileSize
+                        }).ToList() ?? new List<CourseContentDto>()
+                }).ToList();
         }
 
-        public async Task<IEnumerable<InstructorResponseDto>> GetAllInstructorsAsync()
+        public async Task CreateNewCourseAsync(CreateCourseDto dto)
         {
-            var instructors =
-                await _instructorRepository.GetAllInstructorsAsync();
+            var loggedUserId = _currentUserService.UserId;
+            var loggedUserRole = _currentUserService.Role;
 
-            return instructors.Select(i => new InstructorResponseDto
-            {
-                InstructorId = i.Id,
-            }).ToList();
-        }
+            if (loggedUserId == null ||  !string.Equals(loggedUserRole, nameof(Roles.Instructor), StringComparison.OrdinalIgnoreCase))
+                throw new UnauthorizedAccessException("Unauthorized user ...");
 
-        public async Task<int> CreateInstructorAsync(CreateInstructorDto dto)
-        {
-            //var newInstructor = Instructor.Create(
-            //    dto.FirstName,
-            //    dto.LastName,
-            //    dto.NIC,
-            //    dto.Address);
-
-            //return await _instructorRepository.CreateInstructorAsync(newInstructor);
-            return 1;
-        }
-
-        public async Task<InstructorResponseDto> UpdateInstructorDetailsAsync(UpdateInstructorDto dto)
-        {
-            var instructor =
-                await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(dto.Id);
+            var instructor = 
+                await _instructorRepository.GetInstructorDetailsByUserIdAsync(loggedUserId);
 
             if (instructor == null)
-                throw new NotFoundException("Instructor not found ...");
+                throw new UnauthorizedAccessException("User is not a valid instructor ...");
 
-            instructor.Update(
-                1, 2
-               );
+            var newCourse = Course.Create(
+                dto.Title,
+                dto.Credits,
+                dto.EntrollmentLimit
+            );
 
-            var affectedRows =
-                await _instructorRepository.UpdateInstructorDetailsAsync(instructor);
+            newCourse.InstructorId = instructor?.Id;
+            newCourse.Description = dto.Description;
+            newCourse.CategoryEnum = dto.CategoryEnum;
+            newCourse.DurationHours = dto.DurationHours;
 
-            if (affectedRows == 0)
-                throw new Exception("Instructor update failed ...");
+            await _instructorRepository.CreateNewCourseAsync(newCourse);
 
-            return new InstructorResponseDto
-            {
-                InstructorId = instructor.Id
-            };
         }
 
-        public async Task InactivateInstructorByInstructorIdAsync(int instructorId)
+        public async Task UploadCourseContentAsync(UploadCourseContentDto dto)
         {
-            var instructor =
-                await _instructorRepository.GetInstructorDetailsByInstructorIdAsync(instructorId);
+            var loggedUserId = _currentUserService.UserId;
+            if (loggedUserId == null)
+                throw new UnauthorizedAccessException("Unauthorized user ...");
+
+            var instructor = 
+                await _instructorRepository.GetInstructorDetailsByUserIdAsync(loggedUserId);
 
             if (instructor == null)
-                throw new NotFoundException("Instructor not found ...");
+                throw new UnauthorizedAccessException("User is not a valid instructor ...");
 
-            var affectedRows =
-                await _instructorRepository.InactivateInstructorByInstructorIdAsync(instructorId);
+            var content = CourseContent.Create(
+                dto.CourseId,
+                dto.Title,
+                dto.FileName
+            );
 
-            if (affectedRows == 0)
-                throw new Exception("Instructor inactivation failed...");
+            var course = 
+                await _instructorRepository.GetCourseDetailsByCourseIdAsync(dto.CourseId);
+
+            if (instructor.Id != course.InstructorId)
+                throw new Exception("Not your course ...");
+
+            var folder = Path.Combine("wwwroot", "uploads", content.CourseId.ToString());
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(dto.FileName)}";
+            var fullPath = Path.Combine(folder, fileName);
+
+            try
+            {
+                using var fs = new FileStream(fullPath, FileMode.Create);
+                await dto.FileStream.CopyToAsync(fs);
+
+                content.Description = dto.Description;
+                content.InstructorId = instructor.Id;
+                content.FileUrl = $"/uploads/{dto.CourseId}/{fileName}";
+                content.FileSize = fs.Length;
+                await _instructorRepository.UploadCourseContentAsync(content);
+            }
+            catch
+            {
+                if(File.Exists(fullPath))
+                    File.Delete(fullPath);
+                throw;
+            }
         }
     }
 }

@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StudentManagementSystem.Application.DTOs.ApiResponse;
-using StudentManagementSystem.Application.DTOs.Instructor;
+using StudentManagementSystem.Application.DTOs.Course;
+using StudentManagementSystem.Application.DTOs.CourseContent;
 using StudentManagementSystem.Application.Interfaces.IServices;
+using StudentManagementSystem.Domain;
 
 namespace StudentManagementSystem.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = nameof(Roles.Instructor))]
     public class InstructorController : ControllerBase
     {
         private readonly IInstructorService _instructorService;
@@ -15,69 +19,46 @@ namespace StudentManagementSystem.Api.Controllers
             _instructorService = instructorService;
         }
 
-        [HttpGet("{instructorId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ApiResponse<InstructorResponseDto>>> GetInstructorDetailsByInstructorIdAsync(int instructorId)
-        {
-            var instructor = await _instructorService.GetInstructorDetailsByInstructorIdAsync(instructorId);
-
-            return Ok(new ApiResponse<InstructorResponseDto>
-            {
-                Success = true,
-                Data = instructor,
-                Message = $"Instructor by Id {instructorId} retrieved successfully ..."
-            });
-        }
-
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<InstructorResponseDto>>> GetAllInstructorsAsync()
+        public async Task<ActionResult<ApiResponse<IEnumerable<CourseDto>>>> GetCoursesByInstructorAsync()
         {
-            var allInstructors = await _instructorService.GetAllInstructorsAsync();
-            return Ok(new ApiResponse<IEnumerable<InstructorResponseDto>>
+            var courseDetails = await _instructorService.GetCoursesByInstructorAsync();
+            return Ok(new ApiResponse<IEnumerable<CourseDto>>
             {
                 Success = true,
-                Data = allInstructors,
-                Message = "Instructors retrieved successfully ..."
+                Message = "Course details retrieved successfully ...",
+                Data = courseDetails
             });
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateInstructorAsync([FromBody] CreateInstructorDto dto)
+        public async Task<ActionResult<ApiResponse<string>>> CreateNewCourseAsync(CreateCourseDto dto)
         {
-            var result = await _instructorService.CreateInstructorAsync(dto);
-            return Ok($"Successfully created with Id {result}");
-        }
-
-        [HttpPut]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ApiResponse<InstructorResponseDto>>> UpdateInstructorDetailsAsync([FromBody] UpdateInstructorDto dto)
-        {
-            var updatedInstructor = await _instructorService.UpdateInstructorDetailsAsync(dto);
-
-            return Ok(new ApiResponse<InstructorResponseDto>
-            {
-                Success = true,
-                Data = updatedInstructor,
-                Message = "Instructor updated successfully ..."
-            });
-        }
-
-        [HttpPut("{instructorId}/inactivate")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ApiResponse<string>>> InactivateInstructorByInstructorIdAsync(int instructorId)
-        {
-            await _instructorService.InactivateInstructorByInstructorIdAsync(instructorId);
-
+            await _instructorService.CreateNewCourseAsync(dto);
             return Ok(new ApiResponse<string>
             {
                 Success = true,
-                Message = "Instructor inactivated successfully ..."
+                Message = "Course created succefully"
+            });
+        }
+
+        [HttpPost("courseContent")]
+        public async Task<ActionResult<ApiResponse<string>>> UploadCourseContentAsync([FromForm] UploadCourseContentRequest request)
+        {
+            using var stream = request.File.OpenReadStream();
+            var dto = new UploadCourseContentDto
+            {
+                CourseId = request.CourseId,
+                Title = request.Title,
+                Description = request.Description,
+                FileStream = stream,
+                FileName = request.File.FileName
+            };
+            await _instructorService.UploadCourseContentAsync(dto);
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Course content uploaded successfully ..."
             });
         }
     }
