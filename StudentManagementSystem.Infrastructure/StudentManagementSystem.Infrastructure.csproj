@@ -9,6 +9,11 @@
   <ItemGroup>
     <None Remove="Persistence\Sql\Account\Select_EducationalDetails.sql" />
     <None Remove="Persistence\Sql\Account\Select_ExistingEducationIds.sql" />
+    <None Remove="Persistence\Sql\Admin\Select_ApprovalDetails.sql" />
+    <None Remove="Persistence\Sql\Admin\Select_EnrollmentDetails.sql" />
+    <None Remove="Persistence\Sql\Admin\Select_InstructorDetailsByInstructorId.sql" />
+    <None Remove="Persistence\Sql\Admin\Update_EnrollmentStatus.sql" />
+    <None Remove="Persistence\Sql\Admin\Update_InstructorDetailsByInstructorId.sql" />
     <None Remove="Persistence\Sql\Instructor\Insert_CourseContent.sql" />
     <None Remove="Persistence\Sql\Instructor\Insert_NewCourse.sql" />
     <None Remove="Persistence\Sql\Instructor\Select_CourseContentByContentId.sql" />
@@ -18,6 +23,9 @@
     <None Remove="Persistence\Sql\Instructor\Update_CourseContentByContentIdForInactivation.sql" />
     <None Remove="Persistence\Sql\Instructor\Update_CourseContentByCourseIdForInactivation.sql" />
     <None Remove="Persistence\Sql\Instructor\Update_CourseForInactivation.sql" />
+    <None Remove="Persistence\Sql\Student\Insert_NewEnrollment.sql" />
+    <None Remove="Persistence\Sql\Student\Select_EnrollmentDetails.sql" />
+    <None Remove="Persistence\Sql\Student\Select_StudentDetailsByUserId.sql" />
     <None Remove="Persistence\Sql\User\Insert_NewEducation.sql" />
     <None Remove="Persistence\Sql\User\Insert_NewInstructor.sql" />
     <None Remove="Persistence\Sql\User\Insert_NewInstructorExperience.sql" />
@@ -29,6 +37,30 @@
     <None Remove="Persistence\Sql\User\Update_UserForPassword.sql" />
     <None Remove="Persistence\Sql\User\Update_UserForPasswordResetToken.sql" />
     <None Remove="Persistence\Sql\User\Update_UserForRegistrationNumber.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Persistence\Sql\Admin\Select_ApprovalDetails.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Admin\Select_EnrollmentDetails.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Admin\Select_InstructorDetailsByInstructorId.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Admin\Update_EnrollmentStatus.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Admin\Update_InstructorDetailsByInstructorId.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Student\Select_EnrollmentDetails.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Student\Select_StudentDetailsByUserId.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -90,6 +122,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Persistence\Sql\Instructor\Update_CourseForInactivation.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Student\Insert_NewEnrollment.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Persistence\Sql\User\Insert_NewEducation.sql">

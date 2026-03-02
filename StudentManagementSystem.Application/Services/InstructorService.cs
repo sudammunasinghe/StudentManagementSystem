@@ -4,11 +4,6 @@ using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
 using StudentManagementSystem.Domain;
 using StudentManagementSystem.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentManagementSystem.Application.Services
 {
@@ -28,13 +23,13 @@ namespace StudentManagementSystem.Application.Services
             if (loggedUserId == null)
                 throw new UnauthorizedAccessException("Unauthorized user ...");
 
-            var instructor = 
+            var instructor =
                 await _instructorRepository.GetInstructorDetailsByUserIdAsync(loggedUserId);
 
             if (instructor == null)
                 throw new UnauthorizedAccessException("User is not a valid instructor ...");
 
-            var courseDetails = 
+            var courseDetails =
                 await _instructorRepository.GetCoursesByInstructorAsync(instructor.Id);
 
             return courseDetails.courses.
@@ -65,10 +60,10 @@ namespace StudentManagementSystem.Application.Services
             var loggedUserId = _currentUserService.UserId;
             var loggedUserRole = _currentUserService.Role;
 
-            if (loggedUserId == null ||  !string.Equals(loggedUserRole, nameof(Roles.Instructor), StringComparison.OrdinalIgnoreCase))
+            if (loggedUserId == null || !string.Equals(loggedUserRole, nameof(Roles.Instructor), StringComparison.OrdinalIgnoreCase))
                 throw new UnauthorizedAccessException("Unauthorized user ...");
 
-            var instructor = 
+            var instructor =
                 await _instructorRepository.GetInstructorDetailsByUserIdAsync(loggedUserId);
 
             if (instructor == null)
@@ -95,7 +90,7 @@ namespace StudentManagementSystem.Application.Services
             if (loggedUserId == null)
                 throw new UnauthorizedAccessException("Unauthorized user ...");
 
-            var instructor = 
+            var instructor =
                 await _instructorRepository.GetInstructorDetailsByUserIdAsync(loggedUserId);
 
             if (instructor == null)
@@ -107,7 +102,7 @@ namespace StudentManagementSystem.Application.Services
                 dto.FileName
             );
 
-            var course = 
+            var course =
                 await _instructorRepository.GetCourseDetailsByCourseIdAsync(dto.CourseId);
 
             if (instructor.Id != course.InstructorId)
@@ -133,7 +128,7 @@ namespace StudentManagementSystem.Application.Services
             }
             catch
             {
-                if(File.Exists(fullPath))
+                if (File.Exists(fullPath))
                     File.Delete(fullPath);
                 throw;
             }
@@ -145,13 +140,13 @@ namespace StudentManagementSystem.Application.Services
             if (loggedUserId == null)
                 throw new UnauthorizedAccessException("UnAuthorized User ...");
 
-            var instructor = 
+            var instructor =
                 await _instructorRepository.GetInstructorDetailsByUserIdAsync(loggedUserId);
 
             if (instructor == null)
                 throw new UnauthorizedAccessException("User is not a valid instructor ...");
 
-            var course = 
+            var course =
                 await _instructorRepository.GetCourseDetailsByCourseIdAsync(courseId);
 
             if (course == null)
@@ -169,13 +164,13 @@ namespace StudentManagementSystem.Application.Services
             if (loggedUserId == null)
                 throw new UnauthorizedAccessException("UnAuthorized User ...");
 
-            var instructor = 
+            var instructor =
                 await _instructorRepository.GetInstructorDetailsByUserIdAsync(loggedUserId);
 
             if (instructor == null)
                 throw new UnauthorizedAccessException("User is not a valid instructor ...");
 
-            var courseContent = 
+            var courseContent =
                 await _instructorRepository.GetCourseContentByContentIdAsync(contentId);
 
             if (courseContent == null)

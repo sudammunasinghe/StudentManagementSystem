@@ -15,6 +15,7 @@
         {
             if (Status != EnrollmentStatus.Pending)
                 throw new Exception("Only pending enrollment can be approved ...");
+            Status = EnrollmentStatus.Approved;
         }
         public void Reject(string? reason)
         {
@@ -23,6 +24,8 @@
 
             if (string.IsNullOrWhiteSpace(reason))
                 throw new Exception("Rejected reason is mandatory ...");
+            Status = EnrollmentStatus.Rejected;
+            RejectedReason = reason;
         }
     }
 }

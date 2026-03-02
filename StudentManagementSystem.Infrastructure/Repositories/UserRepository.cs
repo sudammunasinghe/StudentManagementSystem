@@ -152,7 +152,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
 
                 //Generate registration number and update the user table
                 var registrationNumber = $"INS/{DateTime.UtcNow.Year}/{instructorId:D4}";
-                await db.ExecuteAsync(_Update_UserForRegistrationNumber, new { UserId  = userId, RegistrationNumber = registrationNumber }, transaction );
+                await db.ExecuteAsync(_Update_UserForRegistrationNumber, new { UserId = userId, RegistrationNumber = registrationNumber }, transaction);
 
                 if (instructorDetails.InstructorExperiences != null && instructorDetails.InstructorExperiences.Any())
                 {

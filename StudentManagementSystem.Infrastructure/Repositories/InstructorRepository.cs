@@ -1,14 +1,8 @@
 ﻿using Dapper;
-using SendGrid.Helpers.Mail;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Domain.Entities;
 using StudentManagementSystem.Domain.Persistence;
 using StudentManagementSystem.Infrastructure.Persistence.Sql.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StudentManagementSystem.Infrastructure.Repositories
 {
@@ -59,7 +53,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
         public async Task CreateNewCourseAsync(Course newCourse)
         {
             using var db = _connectionFactory.CreateConnection();
-            await db.ExecuteAsync(_Insert_NewCourse, newCourse );
+            await db.ExecuteAsync(_Insert_NewCourse, newCourse);
         }
 
         public async Task<Course?> GetCourseDetailsByCourseIdAsync(int courseId)
@@ -77,7 +71,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
         public async Task<CourseContent?> GetCourseContentByContentIdAsync(int contentId)
         {
             using var db = _connectionFactory.CreateConnection();
-            return await db.QueryFirstOrDefaultAsync<CourseContent>(_Select_CourseContentByContentId, new { ContentId  = contentId });
+            return await db.QueryFirstOrDefaultAsync<CourseContent>(_Select_CourseContentByContentId, new { ContentId = contentId });
         }
 
         public async Task InactivateCourseByCourseIdAsync(int courseId)
@@ -87,8 +81,8 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             using var transaction = db.BeginTransaction();
             try
             {
-                await db.ExecuteAsync(_Update_CourseForInactivation, new { CourseId = courseId }, transaction );
-                await db.ExecuteAsync(_Update_CourseContentByCourseIdForInactivation, new { CourseId = courseId }, transaction );
+                await db.ExecuteAsync(_Update_CourseForInactivation, new { CourseId = courseId }, transaction);
+                await db.ExecuteAsync(_Update_CourseContentByCourseIdForInactivation, new { CourseId = courseId }, transaction);
                 transaction.Commit();
             }
             catch

@@ -13,7 +13,7 @@ namespace StudentManagementSystem.Application.Services
             _enrollmentApprovalRepository = enrollmentApprovalRepository;
         }
 
-        public async Task<IEnumerable<PendingApprovalDetailsDto>> GetEnrollmentPendingApprovals()
+        public async Task<IEnumerable<ApprovalDetailsDto>> GetEnrollmentPendingApprovals()
         {
             return await _enrollmentApprovalRepository.GetEnrollmentPendingApprovals();
         }

@@ -87,16 +87,16 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             try
             {
                 //Updates User details
-                await db.ExecuteAsync(_Update_User, profile, transaction );
+                await db.ExecuteAsync(_Update_User, profile, transaction);
 
-                if(role == nameof(Roles.Student))
+                if (role == nameof(Roles.Student))
                 {
                     //Extract student id from the registration number.
-                    var studentId = 
+                    var studentId =
                         int.Parse(profile.RegistrationNumber.Substring(profile.RegistrationNumber.Length - 4));
 
-                    var existingIds = 
-                        (await db.QueryAsync<int>(_Select_ExistingEducationIds, new { StudentId = studentId }, transaction )).ToList();
+                    var existingIds =
+                        (await db.QueryAsync<int>(_Select_ExistingEducationIds, new { StudentId = studentId }, transaction)).ToList();
 
                     var incomingIds = profile?.EducationalDetails?
                         .Where(edu => edu.Id.HasValue)
@@ -107,8 +107,8 @@ namespace StudentManagementSystem.Infrastructure.Repositories
 
                     //Inactivate Education records
                     if (IdsToInactivate.Any())
-                        await db.ExecuteAsync(_Update_Education, new { Ids = IdsToInactivate }, transaction );
-                    
+                        await db.ExecuteAsync(_Update_Education, new { Ids = IdsToInactivate }, transaction);
+
                     //Insert or Update Educational Details
                     if (profile.EducationalDetails != null)
                     {
@@ -154,14 +154,14 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                     }
 
                 }
-                else if(role == nameof(Roles.Instructor))
+                else if (role == nameof(Roles.Instructor))
                 {
                     ////Extract instructor id from the registration number.
-                    var instructorId = 
+                    var instructorId =
                         int.Parse(profile.RegistrationNumber.Substring(profile.RegistrationNumber.Length - 4));
 
-                    var existingIds = 
-                        (await db.QueryAsync<int>(_Select_ExistingInstructorExperienceIds, new { InstructorId = instructorId }, transaction )).ToList();
+                    var existingIds =
+                        (await db.QueryAsync<int>(_Select_ExistingInstructorExperienceIds, new { InstructorId = instructorId }, transaction)).ToList();
 
                     var incomingIds = profile.InstructorExperiences?
                         .Where(exp => exp.Id.HasValue)
@@ -218,7 +218,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                                 );
                             }
                         }
-                    }        
+                    }
                 }
                 transaction.Commit();
             }
