@@ -14,5 +14,7 @@ namespace StudentManagementSystem.Application.Interfaces.IServices
         Task<IEnumerable<CourseDto>> GetCoursesByInstructorAsync();
         Task CreateNewCourseAsync(CreateCourseDto dto);
         Task UploadCourseContentAsync(UploadCourseContentDto dto);
+        Task InactivateCourseByCourseIdAsync(int courseId);
+        Task InactivateCourseContentByContentIdAsync(int contentId);
     }
 }

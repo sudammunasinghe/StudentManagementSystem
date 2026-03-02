@@ -138,5 +138,53 @@ namespace StudentManagementSystem.Application.Services
                 throw;
             }
         }
+
+        public async Task InactivateCourseByCourseIdAsync(int courseId)
+        {
+            var loggedUserId = _currentUserService.UserId;
+            if (loggedUserId == null)
+                throw new UnauthorizedAccessException("UnAuthorized User ...");
+
+            var instructor = 
+                await _instructorRepository.GetInstructorDetailsByUserIdAsync(loggedUserId);
+
+            if (instructor == null)
+                throw new UnauthorizedAccessException("User is not a valid instructor ...");
+
+            var course = 
+                await _instructorRepository.GetCourseDetailsByCourseIdAsync(courseId);
+
+            if (course == null)
+                throw new Exception("Course not found ...");
+
+            if (course.InstructorId != instructor.Id)
+                throw new Exception("Not your course ...");
+
+            await _instructorRepository.InactivateCourseByCourseIdAsync(courseId);
+        }
+
+        public async Task InactivateCourseContentByContentIdAsync(int contentId)
+        {
+            var loggedUserId = _currentUserService.UserId;
+            if (loggedUserId == null)
+                throw new UnauthorizedAccessException("UnAuthorized User ...");
+
+            var instructor = 
+                await _instructorRepository.GetInstructorDetailsByUserIdAsync(loggedUserId);
+
+            if (instructor == null)
+                throw new UnauthorizedAccessException("User is not a valid instructor ...");
+
+            var courseContent = 
+                await _instructorRepository.GetCourseContentByContentIdAsync(contentId);
+
+            if (courseContent == null)
+                throw new Exception("Course content not found ...");
+
+            if (courseContent.InstructorId != instructor.Id)
+                throw new Exception("Not your course content ...");
+
+            await _instructorRepository.InactivateCourseContentByContentIdAsync(contentId);
+        }
     }
 }

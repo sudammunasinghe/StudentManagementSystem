@@ -61,5 +61,27 @@ namespace StudentManagementSystem.Api.Controllers
                 Message = "Course content uploaded successfully ..."
             });
         }
+
+        [HttpPut("{courseId}/CourseInactivate")]
+        public async Task<ActionResult<ApiResponse<string>>> InactivateCourseByCourseIdAsync(int courseId)
+        {
+            await _instructorService.InactivateCourseByCourseIdAsync(courseId);
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Course inactivated successfully ..."
+            });
+        }
+
+        [HttpPut("{contentId}/ContentInactivate")]
+        public async Task<ActionResult<ApiResponse<string>>> InactivateCourseContentByContentIdAsync(int contentId)
+        {
+            await _instructorService.InactivateCourseContentByContentIdAsync(contentId);
+            return Ok(new ApiResponse<string>
+            {
+                Success = true,
+                Message = "Course content inactivated successfully ..."
+            });
+        }
     }
 }

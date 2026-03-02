@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using SendGrid.Helpers.Mail;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Domain.Entities;
 using StudentManagementSystem.Domain.Persistence;
@@ -21,6 +22,10 @@ namespace StudentManagementSystem.Infrastructure.Repositories
         private readonly string _Select_CourseDetailsByCourseId;
         private readonly string _Insert_CourseContent;
         private readonly string _Select_CourseDetailsAndContents;
+        private readonly string _Update_CourseForInactivation;
+        private readonly string _Update_CourseContentByCourseIdForInactivation;
+        private readonly string _Update_CourseContentByContentIdForInactivation;
+        private readonly string _Select_CourseContentByContentId;
         public InstructorRepository(IDbConnectionFactory connectionFactory, ISqlQueryLoader queryLoader)
         {
             _connectionFactory = connectionFactory;
@@ -30,6 +35,10 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             _Select_CourseDetailsByCourseId = _queryLoader.Load("Instructor", "Select_CourseDetailsByCourseId.sql");
             _Insert_CourseContent = _queryLoader.Load("Instructor", "Insert_CourseContent.sql");
             _Select_CourseDetailsAndContents = _queryLoader.Load("Instructor", "Select_CourseDetailsAndContents.sql");
+            _Update_CourseForInactivation = _queryLoader.Load("Instructor", "Update_CourseForInactivation.sql");
+            _Update_CourseContentByCourseIdForInactivation = _queryLoader.Load("Instructor", "Update_CourseContentByCourseIdForInactivation.sql");
+            _Update_CourseContentByContentIdForInactivation = _queryLoader.Load("Instructor", "Update_CourseContentByContentIdForInactivation.sql");
+            _Select_CourseContentByContentId = _queryLoader.Load("Instructor", "Select_CourseContentByContentId.sql");
         }
 
         public async Task<(List<Course>? courses, List<CourseContent>? contents)> GetCoursesByInstructorAsync(int instructorId)
@@ -63,6 +72,36 @@ namespace StudentManagementSystem.Infrastructure.Repositories
         {
             using var db = _connectionFactory.CreateConnection();
             await db.ExecuteAsync(_Insert_CourseContent, newContent);
+        }
+
+        public async Task<CourseContent?> GetCourseContentByContentIdAsync(int contentId)
+        {
+            using var db = _connectionFactory.CreateConnection();
+            return await db.QueryFirstOrDefaultAsync<CourseContent>(_Select_CourseContentByContentId, new { ContentId  = contentId });
+        }
+
+        public async Task InactivateCourseByCourseIdAsync(int courseId)
+        {
+            using var db = _connectionFactory.CreateConnection();
+            db.Open();
+            using var transaction = db.BeginTransaction();
+            try
+            {
+                await db.ExecuteAsync(_Update_CourseForInactivation, new { CourseId = courseId }, transaction );
+                await db.ExecuteAsync(_Update_CourseContentByCourseIdForInactivation, new { CourseId = courseId }, transaction );
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
+        public async Task InactivateCourseContentByContentIdAsync(int contentId)
+        {
+            using var db = _connectionFactory.CreateConnection();
+            await db.ExecuteAsync(_Update_CourseContentByContentIdForInactivation, new { ContentId = contentId });
         }
     }
 }
