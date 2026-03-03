@@ -1,4 +1,6 @@
 ﻿using SendGrid.Helpers.Errors.Model;
+using StudentManagementSystem.Application.DTOs.Course;
+using StudentManagementSystem.Application.DTOs.CourseContent;
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Application.Interfaces.IServices;
 using StudentManagementSystem.Domain;
@@ -44,6 +46,40 @@ namespace StudentManagementSystem.Application.Services
                 throw new Exception($"You already enrolled the course : {course.Title}");
 
             await _studentRepository.EnrollToCourseAsync(student.Id, courseId);
+        }
+
+        public async Task<IEnumerable<CourseDto>> GetAllEnrolledCoursesAsync()
+        {
+            var loggedUserId = _currentUserService.UserId;
+            if (loggedUserId == null)
+                throw new UnauthorizedAccessException("UnAuthorized User ...");
+
+            var enrolledCourseDetails =
+                await _studentRepository.GetAllEnrolledCoursesByUserIdAsync(loggedUserId);
+
+            return enrolledCourseDetails.courses
+                .Select(c => new CourseDto
+                {
+                    CourseId = c.Id,
+                    Credits = c.Credits,
+                    Title = c.Title,
+                    Description = c.Description,
+                    CategoryEnum = c.CategoryEnum,
+                    DurationHours = c.DurationHours,
+                    EntrollmentLimit = c.EntrollmentLimit,
+                    CourseContents = enrolledCourseDetails.courseContents
+                        .Where(cc => cc.CourseId == c.Id)
+                        .Select(cc => new CourseContentDto
+                        {
+                            ContentId = cc.Id,
+                            Title = cc.Title,
+                            Description = cc.Description,
+                            ContentType = cc.ContentType,
+                            FileSize = cc.FileSize,
+
+                        }).ToList()
+
+                }).ToList();
         }
     }
 }

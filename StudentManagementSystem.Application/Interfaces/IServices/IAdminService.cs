@@ -6,7 +6,7 @@ namespace StudentManagementSystem.Application.Interfaces.IServices
     public interface IAdminService
     {
         Task<IEnumerable<ApprovalDetailsDto>> GetApprovalDetailsAsync(EnrollmentStatus? status);
-        Task CompleteStudentEnrollmentApprovalAsync(EnrollmentApprovalCompletionDto enrollmentApproval);
-        Task CompleteInstructorRegistrationApprovalAsync(InstructorRegeistrationApprovalCompletionDto instructorApproval);
+        Task<ApprovalResult> CompleteStudentEnrollmentApprovalAsync(EnrollmentApprovalCompletionDto enrollmentApproval);
+        Task<ApprovalResult> CompleteInstructorRegistrationApprovalAsync(InstructorRegeistrationApprovalCompletionDto instructorApproval);
     }
 }

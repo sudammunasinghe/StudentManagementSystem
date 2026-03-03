@@ -31,23 +31,60 @@ namespace StudentManagementSystem.Api.Controllers
         [HttpPut("EnrollmentApproval")]
         public async Task<ActionResult<ApiResponse<string>>> CompleteStudentEnrollmentApprovalAsync([FromForm] EnrollmentApprovalCompletionDto enrollmentApproval)
         {
-            await _adminService.CompleteStudentEnrollmentApprovalAsync(enrollmentApproval);
-            return Ok(new ApiResponse<string>
+            var result = await _adminService.CompleteStudentEnrollmentApprovalAsync(enrollmentApproval);
+            return result switch
             {
-                Success = true,
-                Message = "Approval status updated successfully ..."
-            });
+                ApprovalResult.Approved => Ok(new ApiResponse<string>
+                {
+                    Success = true,
+                    Message = "Successfully Approved ..."
+                }),
+                ApprovalResult.Rejected => Ok(new ApiResponse<string>
+                {
+                    Success = true,
+                    Message = "Successfully Rejected ..."
+                }),
+                ApprovalResult.NotFound => NotFound(new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = "Enrollment not found ..."
+                }),
+                _ => BadRequest(new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = "Invalid status transition ..."
+                })
+            };
         }
 
-        [HttpPut]
+        [HttpPut("InstructorRegistrationApproval")]
         public async Task<ActionResult<ApiResponse<string>>> CompleteInstructorRegistrationApprovalAsync([FromForm] InstructorRegeistrationApprovalCompletionDto instructorApproval)
         {
-            await _adminService.CompleteInstructorRegistrationApprovalAsync(instructorApproval);
-            return Ok(new ApiResponse<string>
+            var result = await _adminService.CompleteInstructorRegistrationApprovalAsync(instructorApproval);
+            return result switch
             {
-                Success = true,
-                Message = "Approval status updated successfully ..."
-            });
+                ApprovalResult.Approved => Ok(new ApiResponse<string>
+                {
+                    Success = true,
+                    Message = "Successfully Approved ..."
+                }),
+                ApprovalResult.Rejected => Ok(new ApiResponse<string>
+                {
+                    Success = true,
+                    Message = "Successfully Rejected ..."
+                }),
+                ApprovalResult.NotFound => NotFound(new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = "Instructor not found ..."
+                }),
+                _ => BadRequest(new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = "Invalid status transition ..."
+                })
+            };
+
         }
     }
 }

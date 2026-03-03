@@ -40,7 +40,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             return await db.QueryFirstOrDefaultAsync<Enrollment>(_Select_EnrollmentDetails, new { StudentId = studentId, CourseId = courseId });
         }
 
-        public async Task CompleteStudentEnrollmentApprovalAsync(Enrollment updatedEnrollment)
+        public async Task<int> CompleteStudentEnrollmentApprovalAsync(Enrollment updatedEnrollment)
         {
             using var db = _connectionFactory.CreateConnection();
             var parameters = new
@@ -50,7 +50,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                 Status = updatedEnrollment.Status,
                 RejectedReason = updatedEnrollment.RejectedReason
             };
-            await db.ExecuteAsync(_Update_EnrollmentStatus, parameters);
+            return await db.ExecuteAsync(_Update_EnrollmentStatus, parameters);
         }
 
         public async Task<Instructor?> GetInstructorDetailsByInstructorIdAsync(int instructorId)
@@ -59,7 +59,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             return await db.QueryFirstOrDefaultAsync<Instructor>(_Select_InstructorDetailsByInstructorId, new { InstructorId = instructorId });
         }
 
-        public async Task CompleteInstructorRegistrationApprovalAsync(Instructor updatedInstructor)
+        public async Task<int> CompleteInstructorRegistrationApprovalAsync(Instructor updatedInstructor)
         {
             using var db = _connectionFactory.CreateConnection();
             var parameters = new
@@ -68,7 +68,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                 RejectedReason = updatedInstructor.RejectedReason,
                 Status = updatedInstructor.Status
             };
-            await db.ExecuteAsync(_Update_InstructorDetailsByInstructorId, parameters);
+            return await db.ExecuteAsync(_Update_InstructorDetailsByInstructorId, parameters);
         }
     }
 }

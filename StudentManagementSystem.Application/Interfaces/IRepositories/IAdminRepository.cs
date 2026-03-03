@@ -7,8 +7,8 @@ namespace StudentManagementSystem.Application.Interfaces.IRepositories
     {
         Task<IEnumerable<ApprovalDetailsDto>> GetAllApprovalDetailsAsync(int? statusCode);
         Task<Enrollment?> GetEnrollmentDetailsAsync(int studentId, int courseId);
-        Task CompleteStudentEnrollmentApprovalAsync(Enrollment updatedEnrollment);
+        Task<int> CompleteStudentEnrollmentApprovalAsync(Enrollment updatedEnrollment);
         Task<Instructor?> GetInstructorDetailsByInstructorIdAsync(int instructorId);
-        Task CompleteInstructorRegistrationApprovalAsync(Instructor updatedInstructor);
+        Task<int> CompleteInstructorRegistrationApprovalAsync(Instructor updatedInstructor);
     }
 }

@@ -25,46 +25,78 @@ namespace StudentManagementSystem.Application.Services
             return await _adminRepository.GetAllApprovalDetailsAsync(statusCode);
         }
 
-        public async Task CompleteStudentEnrollmentApprovalAsync(EnrollmentApprovalCompletionDto enrollmentApproval)
+        public async Task<ApprovalResult> CompleteStudentEnrollmentApprovalAsync(EnrollmentApprovalCompletionDto enrollmentApproval)
         {
             var enrollment =
                 await _adminRepository.GetEnrollmentDetailsAsync(enrollmentApproval.StudentId, enrollmentApproval.CourseId);
 
             if (enrollment == null)
-                throw new NotFoundException("Enrollment not found");
+                return ApprovalResult.NotFound;
 
             if (enrollment.Status != EnrollmentStatus.Pending)
-                throw new BadRequestException("Enrollment is not in pending status");
+                return ApprovalResult.InvalidTransition;
 
-            if (enrollmentApproval.Status == EnrollmentStatus.Approved)
-                enrollment.Approve();
-            else if (enrollmentApproval.Status == EnrollmentStatus.Rejected)
-                enrollment.Reject(enrollmentApproval.RejectedReason);
-            else
-                throw new BadRequestException("Invalid approval status");
-            await _adminRepository.CompleteStudentEnrollmentApprovalAsync(enrollment);
+            switch (enrollmentApproval.Status)
+            {
+                case EnrollmentStatus.Approved:
+                    enrollment.Approve();
+                    break;
+                case EnrollmentStatus.Rejected:
+                    enrollment.Reject(enrollmentApproval.RejectedReason);
+                    break;
+                default:
+                    return ApprovalResult.InvalidTransition;
+            }
 
+            var affectedRows =
+                await _adminRepository.CompleteStudentEnrollmentApprovalAsync(enrollment);
+
+            if (affectedRows == 0)
+                return ApprovalResult.InvalidTransition;
+
+            return enrollmentApproval.Status switch
+            {
+                EnrollmentStatus.Approved => ApprovalResult.Approved,
+                EnrollmentStatus.Rejected => ApprovalResult.Rejected,
+                _ => ApprovalResult.InvalidTransition
+            };
         }
 
-        public async Task CompleteInstructorRegistrationApprovalAsync(InstructorRegeistrationApprovalCompletionDto instructorApproval)
+        public async Task<ApprovalResult> CompleteInstructorRegistrationApprovalAsync(InstructorRegeistrationApprovalCompletionDto instructorApproval)
         {
             var instructor =
                 await _adminRepository.GetInstructorDetailsByInstructorIdAsync(instructorApproval.InstructorId);
 
             if (instructor == null)
-                throw new NotFoundException("Instructor not found");
+                return ApprovalResult.NotFound;
 
             if (instructor.Status != EnrollmentStatus.Pending)
-                throw new BadRequestException("Instructor registration is not in pending status");
+                return ApprovalResult.InvalidTransition;
 
-            if (instructorApproval.Status == EnrollmentStatus.Approved)
-                instructor.Approve();
-            else if (instructorApproval.Status == EnrollmentStatus.Rejected)
-                instructor.Reject(instructorApproval.RejectedReason);
-            else
-                throw new BadRequestException("Invalid approval status");
+            switch (instructorApproval.Status)
+            {
+                case EnrollmentStatus.Approved:
+                    instructor.Approve();
+                    break;
+                case EnrollmentStatus.Rejected:
+                    instructor.Reject(instructorApproval.RejectedReason);
+                    break;
+                default:
+                    return ApprovalResult.InvalidTransition;
+            }
 
-            await _adminRepository.CompleteInstructorRegistrationApprovalAsync(instructor);
+            var affectedRows =
+                await _adminRepository.CompleteInstructorRegistrationApprovalAsync(instructor);
+
+            if (affectedRows == 0)
+                return ApprovalResult.InvalidTransition;
+
+            return instructorApproval.Status switch
+            {
+                EnrollmentStatus.Approved => ApprovalResult.Approved,
+                EnrollmentStatus.Rejected => ApprovalResult.Rejected,
+                _ => ApprovalResult.InvalidTransition
+            };
         }
     }
 }

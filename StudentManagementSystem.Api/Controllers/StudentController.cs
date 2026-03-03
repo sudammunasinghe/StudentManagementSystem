@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudentManagementSystem.Application.DTOs.ApiResponse;
+using StudentManagementSystem.Application.DTOs.Course;
 using StudentManagementSystem.Application.Interfaces.IServices;
 
 namespace StudentManagementSystem.Api.Controllers
@@ -22,6 +23,18 @@ namespace StudentManagementSystem.Api.Controllers
             {
                 Success = true,
                 Message = "Enrollemnt Successfull ..."
+            });
+        }
+
+        [HttpGet("EnrolledCourses")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<CourseDto>>>> GetAllEnrolledCoursesAsync()
+        {
+            var response = await _studentService.GetAllEnrolledCoursesAsync();
+            return Ok(new ApiResponse<IEnumerable<CourseDto>>
+            {
+                Success = true,
+                Data = response,
+                Message = "Enrolled courses retrieved successfully ..."
             });
         }
     }

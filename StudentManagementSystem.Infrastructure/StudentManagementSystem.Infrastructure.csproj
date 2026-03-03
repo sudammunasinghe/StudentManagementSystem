@@ -24,6 +24,7 @@
     <None Remove="Persistence\Sql\Instructor\Update_CourseContentByCourseIdForInactivation.sql" />
     <None Remove="Persistence\Sql\Instructor\Update_CourseForInactivation.sql" />
     <None Remove="Persistence\Sql\Student\Insert_NewEnrollment.sql" />
+    <None Remove="Persistence\Sql\Student\Select_EnrolledCourseByUserId.sql" />
     <None Remove="Persistence\Sql\Student\Select_EnrollmentDetails.sql" />
     <None Remove="Persistence\Sql\Student\Select_StudentDetailsByUserId.sql" />
     <None Remove="Persistence\Sql\User\Insert_NewEducation.sql" />
@@ -53,6 +54,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Persistence\Sql\Admin\Update_InstructorDetailsByInstructorId.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Persistence\Sql\Student\Select_EnrolledCourseByUserId.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Persistence\Sql\Student\Select_EnrollmentDetails.sql">
