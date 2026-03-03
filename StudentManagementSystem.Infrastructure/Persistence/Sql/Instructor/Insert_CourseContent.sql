@@ -1,0 +1,19 @@
+﻿INSERT INTO [dbo].[CourseContent]
+(
+	[CourseId],
+	[InstructorId],
+	[Title],
+	[Description],
+	[ContentType],
+	[FileUrl],
+	[FileSize]
+)
+VALUES(
+    @CourseId,
+    @InstructorId,
+    @Title,
+    @Description,
+    @ContentType,
+    @FileUrl,
+    @FileSize
+);

@@ -2,139 +2,55 @@
 using StudentManagementSystem.Application.Interfaces.IRepositories;
 using StudentManagementSystem.Domain.Entities;
 using StudentManagementSystem.Domain.Persistence;
+using StudentManagementSystem.Infrastructure.Persistence.Sql.Helpers;
 
 namespace StudentManagementSystem.Infrastructure.Repositories
 {
     public class StudentRepository : IStudentRepository
     {
         private readonly IDbConnectionFactory _connectionFactory;
-        public StudentRepository(IDbConnectionFactory connectionFactory)
+        private readonly ISqlQueryLoader _queryLoader;
+
+        private readonly string _Select_StudentDetailsByUserId;
+        private readonly string _Insert_NewEnrollment;
+        private readonly string _Select_EnrollmentDetails;
+        private readonly string _Select_EnrolledCourseByUserId;
+        public StudentRepository(IDbConnectionFactory connectionFactory, ISqlQueryLoader queryLoader)
         {
             _connectionFactory = connectionFactory;
+            _queryLoader = queryLoader;
+            _Select_StudentDetailsByUserId = _queryLoader.Load("Student", "Select_StudentDetailsByUserId.sql");
+            _Insert_NewEnrollment = _queryLoader.Load("Student", "Insert_NewEnrollment.sql");
+            _Select_EnrollmentDetails = _queryLoader.Load("Student", "Select_EnrollmentDetails.sql");
+            _Select_EnrolledCourseByUserId = _queryLoader.Load("Student", "Select_EnrolledCourseByUserId.sql");
         }
 
-        public async Task<Student?> GetStudentDetailsByStudentIdAsync(int stdId)
+        public async Task<Student?> GetStudentByUserIdAsync(int userId)
         {
-            var sql = @"
-                SELECT 
-                    [Id],
-                    [FirstName],
-                    [LastName],
-                    [Address],
-                    [Email],
-                    [NIC] 
-                FROM [dbo].[Student] 
-                WHERE [IsActive] = 1 AND [Id] = @stdId;
-            ";
             using var db = _connectionFactory.CreateConnection();
-            return await db.QueryFirstOrDefaultAsync<Student>(sql, new { stdId });
+            return await db.QueryFirstOrDefaultAsync<Student>(_Select_StudentDetailsByUserId, new { UserId = userId });
         }
 
-        public async Task<IEnumerable<Student>> GetAllStudentsAsync()
+        public async Task EnrollToCourseAsync(int studentId, int courseId)
         {
-            var sql = @"
-                SELECT 
-                    [Id],
-                    [FirstName],
-                    [LastName],
-                    [Address],
-                    [Email],
-                    [NIC] 
-                FROM [dbo].[Student] 
-                WHERE [IsActive] = 1;
-            ";
             using var db = _connectionFactory.CreateConnection();
-            return await db.QueryAsync<Student>(sql);
+            await db.ExecuteAsync(_Insert_NewEnrollment, new { StudentId = studentId, CourseId = courseId });
         }
 
-        public async Task<int> CreateStudentAsync(Student newStudent)
+        public async Task<Enrollment?> GetEnrollmentDetailsAsync(int studentId, int courseId)
         {
-            var sql = @"
-                INSERT INTO [dbo].[Student](
-                    [FirstName],
-                    [LastName],
-                    [Address],
-                    [Email],
-                    [NIC]
-                ) 
-                VALUES
-                (
-                    @FirstName,
-                    @LastName,
-                    @Address,
-                    @Email,
-                    @NIC
-                ); 
-                SELECT CAST(SCOPE_IDENTITY() as int)";
             using var db = _connectionFactory.CreateConnection();
-            return await db.ExecuteScalarAsync<int>(sql, newStudent);
+            return await db.QueryFirstOrDefaultAsync<Enrollment>(_Select_EnrollmentDetails, new { StudentId = studentId, CourseId = courseId });
         }
 
-        public async Task<int> UpdateStudentDetailsAsync(Student updatedStudent)
+        public async Task<(List<Course>? courses, List<CourseContent>? courseContents)> GetAllEnrolledCoursesByUserIdAsync(int userId)
         {
-            var sql = @"
-                UPDATE [dbo].[Student]
-                    SET 
-                        [FirstName] = @FirstName,
-                        [LastName] = @LastName,
-                        [Address] = @Address,
-                        [Email] = @Email,
-                        [NIC] = @NIC,
-                        [LastModifiedDateTime] = GETDATE()
-                WHERE [Id] = @Id;
-            ";
             using var db = _connectionFactory.CreateConnection();
-            return await db.ExecuteAsync(sql, updatedStudent);
+            var multi = await db.QueryMultipleAsync(_Select_EnrolledCourseByUserId, new { UserId = userId });
+            var enrolledCourses = (await multi.ReadAsync<Course>()).ToList();
+            var courseContents = (await multi.ReadAsync<CourseContent>()).ToList();
+            return (enrolledCourses, courseContents);
         }
 
-        public async Task<int> InactivateStudentByStudentIdAsync(int stdId)
-        {
-            var sql = @"
-                UPDATE [dbo].[Student]
-                    SET
-                        [IsActive] = 0,
-                        [LastModifiedDateTime] = GETDATE()
-                WHERE [Id] = @stdId;
-            ";
-            using var db = _connectionFactory.CreateConnection();
-            return await db.ExecuteAsync(sql, new { stdId });
-        }
-
-        public async Task<IEnumerable<Course>> GetEnrolledCoursesByStudentIdAsync(int studentId)
-        {
-            var sql = @"
-                SELECT
-                      CRS.[Id],
-                      CRS.[Title],
-                      CRS.[Credits],
-                      EAS.[Description] [Status]
-                FROM [dbo].[Enrollment] ENR
-                    INNER JOIN [dbo].[Course] CRS ON ENR.[CourseId] = CRS.[Id]
-                    INNER JOIN [dbo].[VW_EnrollmentApprovalStatus] EAS ON ENR.[Status] = EAS.[Id]
-                WHERE ENR.[StudentId] = @studentId AND ENR.[IsActive] = 1;
-            ";
-            using var db = _connectionFactory.CreateConnection();
-            return await db.QueryAsync<Course>(sql, new { studentId });
-        }
-
-        public async Task<IEnumerable<CourseContent>> GetCourseContentsByStudentIdAsync(int studentId)
-        {
-            var sql = @"
-                SELECT
-	                CC.[Id],
-	                CC.[CourseId], 
-	                CC.[InstructorId], 
-	                CC.[Title], 
-	                CC.[Description], 
-	                CC.[ContentType], 
-	                CC.[FileUrl], 
-	                CC.[FileSize] 
-                FROM [dbo].[Enrollment] ENR
-                	INNER JOIN [dbo].[CourseContent] CC ON ENR.[CourseId] = CC.[CourseId] AND CC.[IsActive] = 1
-                WHERE ENR.[IsActive] = 1 AND ENR.[StudentId] = @studentId;
-            ";
-            using var db = _connectionFactory.CreateConnection();
-            return await db.QueryAsync<CourseContent>(sql, new { studentId });
-        }
     }
 }

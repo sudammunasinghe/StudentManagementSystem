@@ -1,13 +1,10 @@
-﻿using StudentManagementSystem.Application.DTOs.Student;
+﻿using StudentManagementSystem.Application.DTOs.Course;
 
 namespace StudentManagementSystem.Application.Interfaces.IServices
 {
     public interface IStudentService
     {
-        Task<StudentResponseDto> GetStudentDetailsByStudentIdAsync(int stdId);
-        Task<IEnumerable<StudentResponseDto>> GetAllStudentsAsync();
-        Task<int> CreateStudentAsync(CreateStudentDto dto);
-        Task<StudentResponseDto> UpdateStudentDetailsAsync(UpdateStudentDto dto);
-        Task InactivateStudentByStudentIdAsync(int stdId);
+        Task EnrollToCourseAsync(int courseId);
+        Task<IEnumerable<CourseDto>> GetAllEnrolledCoursesAsync();
     }
 }

@@ -17,29 +17,23 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IDbConnectionFactory, DbConnectionFactory>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 
-builder.Services.AddScoped<IStudentService, StudentService>();
-builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-
-builder.Services.AddScoped<IInstructorService, InstructorService>();
-builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
-
-builder.Services.AddScoped<ICourseService, CourseService>();
-builder.Services.AddScoped<ICourseRepository, CourseRepository>();
-
-builder.Services.AddScoped<IEnrollService, EnrollService>();
-builder.Services.AddScoped<IEnrollRepository, EnrollRepository>();
-
 builder.Services.AddScoped<IEnrollmentApprovalService, EnrollmentApprovalService>();
 builder.Services.AddScoped<IEnrollmentApprovalRepository, EnrollmentApprovalRepository>();
-
-builder.Services.AddScoped<ICourseContentService, CourseContentService>();
-builder.Services.AddScoped<ICourseContentRepository, CourseContentRepository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
+builder.Services.AddScoped<IInstructorService, InstructorService>();
+builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+
+builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<ITokenGeneratorService, TokenGeneratorService>();

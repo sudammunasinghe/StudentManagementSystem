@@ -1,0 +1,24 @@
+﻿INSERT INTO [dbo].[InstructorExperience]
+(
+	[InstructorId],
+	[CompanyName],
+	[JobTitle],
+	[EmployementType],
+	[Location],
+	[StartDate],
+	[EndDate],
+	[IsCurrentlyWorking],
+	[Description]
+)
+VALUES
+(
+	@InstructorId,
+	@CompanyName,
+	@JobTitle,
+	@EmployementType,
+	@Location,
+	@StartDate,
+	@EndDate,
+	@IsCurrentlyWorking,
+	@Description
+)

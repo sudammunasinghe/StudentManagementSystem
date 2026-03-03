@@ -4,12 +4,9 @@ namespace StudentManagementSystem.Application.Interfaces.IRepositories
 {
     public interface IStudentRepository
     {
-        Task<Student?> GetStudentDetailsByStudentIdAsync(int stdId);
-        Task<IEnumerable<Student>> GetAllStudentsAsync();
-        Task<int> CreateStudentAsync(Student newStudent);
-        Task<int> UpdateStudentDetailsAsync(Student updatedStudent);
-        Task<int> InactivateStudentByStudentIdAsync(int stdId);
-        Task<IEnumerable<Course>> GetEnrolledCoursesByStudentIdAsync(int studentId);
-        Task<IEnumerable<CourseContent>> GetCourseContentsByStudentIdAsync(int studentId);
+        Task<Student?> GetStudentByUserIdAsync(int userId);
+        Task EnrollToCourseAsync(int studentId, int courseId);
+        Task<Enrollment?> GetEnrollmentDetailsAsync(int studentId, int courseId);
+        Task<(List<Course>? courses, List<CourseContent>? courseContents)> GetAllEnrolledCoursesByUserIdAsync(int userId);
     }
 }

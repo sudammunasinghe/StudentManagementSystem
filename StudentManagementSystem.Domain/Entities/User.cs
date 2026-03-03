@@ -20,36 +20,70 @@ namespace StudentManagementSystem.Domain.Entities
         public DateTime PasswrodResetTokenExpiry { get; set; }
         private User() { }
 
+
+        /// <summary>
+        /// Validates user's email address
+        /// </summary>
+        /// <param name="email">The email address to validate.</param>
+        /// <exception cref="DomainException">Thrown when <paramref name="email"/> is null, empty or consists only if whitespace.</exception>
         public static void ValidateEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
                 throw new DomainException("Email is required ...");
         }
 
+        /// <summary>
+        /// Validates user's password.
+        /// </summary>
+        /// <param name="password">The password to validate</param>
+        /// <exception cref="DomainException">Thrown when <paramref name="password"/> is null, empty or consists only if whitespace.</exception>
         public static void ValidatePassword(string password)
         {
             if (string.IsNullOrWhiteSpace(password))
                 throw new DomainException("Password is required ...");
         }
 
+
+        /// <summary>
+        /// Validates the user's last name.
+        /// </summary>
+        /// <param name="firstName">The first name to validate</param>
+        /// <exception cref="DomainException">Thrown when <paramref name="firstName"/> is null, empty or consists only if whitespace.</exception>
         public static void ValidateFirstName(string? firstName)
         {
             if (string.IsNullOrWhiteSpace(firstName))
                 throw new DomainException("First Name is required ...");
         }
 
+
+        /// <summary>
+        /// Validates the user's last name.
+        /// </summary>
+        /// <param name="lastName">The last name to validate</param>
+        /// <exception cref="DomainException">Thrown when <paramref name="lastName"/> is null, empty or consists only if whitespace.</exception>
         public static void ValidateLastName(string? lastName)
         {
             if (string.IsNullOrWhiteSpace(lastName))
                 throw new DomainException("Last Name is required ...");
         }
 
+        /// <summary>
+        /// Validates the user's contact number.
+        /// </summary>
+        /// <param name="contactNumber">The contact number to validate</param>
+        /// <exception cref="DomainException">Thrown when <paramref name="contactNumber"/> is null, empty or consists only if whitespace.</exception>
         public static void ValidateContactNumber(string? contactNumber)
         {
             if (string.IsNullOrWhiteSpace(contactNumber))
                 throw new DomainException("Contact Number is required ...");
         }
 
+        /// <summary>
+        /// Validates nic & extract related information.(Date of birth & Gender)
+        /// </summary>
+        /// <param name="nic">The nic to validate</param>
+        /// <returns></returns>
+        /// <exception cref="DomainException">Thrown when <paramref name="nic"/>is null, empty, consists if whitespace or invalid format.</exception>
         public static NicInfo ExtractNicInformation(string nic)
         {
             if (string.IsNullOrWhiteSpace(nic))

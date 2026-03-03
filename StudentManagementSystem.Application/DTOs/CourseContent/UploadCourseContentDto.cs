@@ -2,8 +2,7 @@
 {
     public class UploadCourseContentDto
     {
-        public int? CourseId { get; set; }
-        public int? InstructorId { get; set; }
+        public int CourseId { get; set; }
         public string? Title { get; set; }
         public string? Description { get; set; }
         public Stream? FileStream { get; set; }

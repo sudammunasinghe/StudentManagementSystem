@@ -14,7 +14,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<IEnumerable<PendingApprovalDetailsDto>> GetEnrollmentPendingApprovals()
+        public async Task<IEnumerable<ApprovalDetailsDto>> GetEnrollmentPendingApprovals()
         {
             var sql = @"
                 SELECT
@@ -31,7 +31,7 @@ namespace StudentManagementSystem.Infrastructure.Repositories
                 WHERE ENR.[Status] = 1
             ";
             using var db = _connectionFactory.CreateConnection();
-            return await db.QueryAsync<PendingApprovalDetailsDto>(sql);
+            return await db.QueryAsync<ApprovalDetailsDto>(sql);
         }
 
         public async Task<Enrollment?> GetEnrollmentDetailsAsync(int studentId, int courseId)

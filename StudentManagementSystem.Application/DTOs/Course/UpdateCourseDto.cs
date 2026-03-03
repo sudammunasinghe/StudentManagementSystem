@@ -2,6 +2,6 @@
 {
     public class UpdateCourseDto : CreateCourseDto
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
     }
 }

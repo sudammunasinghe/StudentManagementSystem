@@ -1,13 +1,14 @@
-﻿using StudentManagementSystem.Application.DTOs.Instructor;
+﻿using StudentManagementSystem.Application.DTOs.Course;
+using StudentManagementSystem.Application.DTOs.CourseContent;
 
 namespace StudentManagementSystem.Application.Interfaces.IServices
 {
     public interface IInstructorService
     {
-        Task<InstructorResponseDto> GetInstructorDetailsByInstructorIdAsync(int instructorId);
-        Task<IEnumerable<InstructorResponseDto>> GetAllInstructorsAsync();
-        Task<int> CreateInstructorAsync(CreateInstructorDto dto);
-        Task<InstructorResponseDto> UpdateInstructorDetailsAsync(UpdateInstructorDto dto);
-        Task InactivateInstructorByInstructorIdAsync(int instructorId);
+        Task<IEnumerable<CourseDto>> GetCoursesByInstructorAsync();
+        Task CreateNewCourseAsync(CreateCourseDto dto);
+        Task UploadCourseContentAsync(UploadCourseContentDto dto);
+        Task InactivateCourseByCourseIdAsync(int courseId);
+        Task InactivateCourseContentByContentIdAsync(int contentId);
     }
 }

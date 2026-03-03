@@ -16,7 +16,7 @@ namespace StudentManagementSystem.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PendingApprovalDetailsDto>> GetEnrollmentPendingApprovals()
+        public async Task<ActionResult<ApprovalDetailsDto>> GetEnrollmentPendingApprovals()
         {
             var response = await _enrollmentApprovalService.GetEnrollmentPendingApprovals();
             return Ok(response);

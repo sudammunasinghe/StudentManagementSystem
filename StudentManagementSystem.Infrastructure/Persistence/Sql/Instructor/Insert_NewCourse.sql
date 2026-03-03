@@ -1,0 +1,20 @@
+﻿INSERT INTO [dbo].[Course]
+(
+    [InstructorId],
+    [Title],
+    [Description],
+    [CategoryEnum],
+    [Credits],
+    [DurationHours],
+    [EntrollmentLimit]
+)
+VALUES
+(
+    @InstructorId,
+    @Title,
+    @Description,
+    @CategoryEnum,
+    @Credits,
+    @DurationHours,
+    @EntrollmentLimit
+);
